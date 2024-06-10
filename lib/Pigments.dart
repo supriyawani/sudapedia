@@ -21,6 +21,8 @@ class _PigmentsState extends State<Pigments> {
   var isLoading = false;
   Timer? _logoutTimer;
   bool _isMounted = false;
+  Timer? _countdownTimer;
+  int _remainingTime = 2;
   // String? Token;
   @override
   void initState() {
@@ -41,16 +43,17 @@ class _PigmentsState extends State<Pigments> {
   }
 
   void _startLogoutTimer() async {
-    const logoutDuration = Duration(minutes: 30);
+    /*const logoutDuration = Duration(minutes: 30);
     if (!(await SessionManager.isUserLoggedIn())) {
       return;
-    }
+    }*/
     getToken();
     print("userToken:" + userToken.toString());
     print("employeeID:" + employeeId.toString());
-
+/*
     _logoutTimer = Timer(logoutDuration,
-        _logout(employeeId.toString(), userToken!) as void Function());
+        _logout(employeeId.toString(), userToken!) as void Function());*/
+    SessionTimeoutManager.startLogoutTimer(context);
   }
 
   @override

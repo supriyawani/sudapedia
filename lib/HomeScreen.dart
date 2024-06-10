@@ -1,16 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/CategoryComparison.dart';
 import 'package:sudapedia/CategoryDetails.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Model/CategoriesResponse.dart';
-import 'package:sudapedia/SendOTP.dart';
-import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/SubCategory.dart';
 import 'package:sudapedia/SubCategoryButtons.dart';
 import 'package:sudapedia/repository/Category_repo.dart';
@@ -43,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _startLogoutTimer() async {
+  /* void _startLogoutTimer() async {
     const logoutDuration = Duration(minutes: 30);
     if (!(await SessionManager.isUserLoggedIn())) {
       return;
@@ -86,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SnackBar(content: Text('Failed to connect to the server')),
       );
     }
-  }
+  }*/
 
   Future<void> getToken() async {
     userToken = await DatabaseHelper().getToken();

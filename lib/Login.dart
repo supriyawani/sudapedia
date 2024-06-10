@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Pigments.dart';
-import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/repository/Otp_repo.dart';
 
 class Login extends StatefulWidget {
@@ -89,8 +88,8 @@ class _LoginState extends State<Login> {
           print("User token inserted successfully!");
           //_sessionTimeoutManager.startSession(context);
           _saveLoginInfo();
-          await SessionManager.setLoginTime(
-              DateTime.now(), response.userToken.toString());
+          /*await SessionManager.setLoginTime(
+              DateTime.now(), response.userToken.toString());*/
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Pigments()));
         } else {

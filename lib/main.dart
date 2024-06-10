@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Pigments.dart';
 import 'package:sudapedia/SendOTP.dart';
 import 'package:sudapedia/SessionTimeoutManager.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
           fontFamily: 'Montserrat'),
+      navigatorObservers: [SessionNavigatorObserver()],
       home: const MyHomePage(
         title: 'Sudapedia',
       ),
@@ -57,7 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _checkSession() async {
-    bool isLoggedIn = await SessionManager.isUserLoggedIn();
+    //  bool isLoggedIn = await SessionManager.isUserLoggedIn();
+    bool isLoggedIn = await DatabaseHelper().isUserLoggedIn();
     print("isLoggedIn:" + isLoggedIn.toString());
     if (isLoggedIn) {
       Navigator.pushReplacement(
