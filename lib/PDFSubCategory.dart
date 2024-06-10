@@ -5,13 +5,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
+import 'package:sudapedia/PDFViewerFromUrl.dart';
 import 'package:sudapedia/repository/PDFSubCategory_repo.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:sudapedia/repository/Stats_repo.dart';
 
 class PDFSubCategory extends StatefulWidget {
   String id, code, subcat_id, color_id, categoryName, color_code_id;
@@ -44,6 +47,11 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
       color_id = "",
       categoryName = "",
       color_code_id = "";
+  String pdf_id = "";
+  bool isDownloaded = false;
+  String downloadedFilePath = '';
+  String downloadedFilePathforpdfview = '';
+  Map<String, String> downloadedPDFs = {};
   _PDFSubCategoryState(String id, String code, String subcat_id,
       String color_id, String categoryName, String color_code_id) {
     this.id = id;
@@ -76,6 +84,17 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
     print("subcat_id:" + subcat_id);
     print("color_id:" + color_id);
     print("color_code_id:" + color_code_id);
+  }
+
+  Future<bool> isPDFDownloaded(String pdfId) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey(pdfId)) {
+      String? filePath = prefs.getString(pdfId);
+      if (filePath != null && await File(filePath).exists()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Future<void> getToken() async {
@@ -188,6 +207,160 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
                           ),
                         );
                       } else if (snapshot.hasData && snapshot.data != null) {
+                        print("Data: ${snapshot.data}");
+                        List<dynamic> dataList = snapshot.data;
+                        return ListView.builder(
+                          //physics: NeverScrollableScrollPhysics(),
+                          physics: ScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: dataList.length,
+                          itemBuilder: (context, index) {
+                            return FutureBuilder<bool>(
+                                future: isPDFDownloaded(
+                                    dataList[index].id.toString()),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  }
+
+                                  bool isDownloaded = snapshot.data!;
+                                  return GestureDetector(
+                                      onTap: () async {
+                                        if (isDownloaded) {
+                                          print("ontap isDownloaded");
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          String filePath = prefs.getString(
+                                              dataList[index].id.toString())!;
+                                          //openPDF(filePath);
+                                          await OpenFilex.open(filePath);
+                                        } else {
+                                          print("ontap");
+                                          pdf_id =
+                                              dataList[index].id.toString();
+                                          print(Constant.url_pdf_path +
+                                              dataList[index].pDFPath);
+                                          pdfviewer(Constant.url_pdf_path +
+                                              dataList[index].pDFPath);
+                                        }
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: 10.sp, right: 10.sp),
+                                        child: ClipRRect(
+                                          //  borderRadius: BorderRadius.circular(20.sp),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: SvgPicture.asset(
+                                                  "assets/pdf_field.svg",
+                                                ),
+                                              ),
+                                              ListTile(
+                                                contentPadding: EdgeInsets.only(
+                                                    left: 15.sp,
+                                                    right: 15.sp,
+                                                    bottom: 5.sp,
+                                                    top: 5.sp),
+                                                title: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Flexible(
+                                                        child: Text(
+                                                      dataList[index].pDFName ??
+                                                          'No Name',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        color: Color(
+                                                            0xFFE97132), // Replace with your desired color
+                                                      ),
+                                                    )),
+                                                    isDownloaded
+                                                        ? IconButton(
+                                                            icon: Icon(
+                                                                Icons.share,
+                                                                size: 18.sp,
+                                                                color: Colors
+                                                                    .blue),
+                                                            onPressed:
+                                                                () async {
+                                                              final prefs =
+                                                                  await SharedPreferences
+                                                                      .getInstance();
+                                                              String filePath =
+                                                                  prefs.getString(
+                                                                      dataList[
+                                                                              index]
+                                                                          .id
+                                                                          .toString())!;
+                                                              shareFile(
+                                                                  filePath);
+                                                            },
+                                                          )
+                                                        : IconButton(
+                                                            icon: Icon(
+                                                                Icons
+                                                                    .download_for_offline_outlined,
+                                                                size: 18.sp,
+                                                                color: Colors
+                                                                    .blue),
+                                                            onPressed:
+                                                                () async {
+                                                              pdf_id = dataList[
+                                                                      index]
+                                                                  .id
+                                                                  .toString();
+                                                              await downloadPDF(Constant
+                                                                      .url_pdf_path +
+                                                                  dataList[
+                                                                          index]
+                                                                      .pDFPath);
+                                                            },
+                                                          ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ));
+                                });
+                          },
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            "No data available",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        );
+                      }
+                    },
+                  )),
+                  /*Expanded(
+                      child: StreamBuilder(
+                    stream: _postsController!.stream,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        print("Error: ${snapshot.error}");
+                        return Center(
+                          child: Text(
+                            "Error fetching data",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      } else if (snapshot.hasData && snapshot.data != null) {
                         //} else if (snapshot.hasData &&(snapshot.data as List).isEmpty) {
                         print("Data: ${snapshot.data}");
 
@@ -267,7 +440,7 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
                         );
                       }
                     },
-                  )),
+                  )),*/
                 ],
               ),
             )
@@ -277,7 +450,7 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
     });
   }
 
-  Color getColor(String code) {
+  /*Color getColor(String code) {
     switch (code) {
       case 'A':
         return Color(0xFFBABDFF);
@@ -305,9 +478,9 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
       default:
         return Color(0xFFFFDFBA); // fallback image
     }
-  }
+  }*/
 
-  void launchPDF(String pdfUrl) async {
+  /* void launchPDF(String pdfUrl) async {
     if (await canLaunch(pdfUrl)) {
       await launch(pdfUrl);
     } else {
@@ -322,9 +495,9 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
     debugPrint('opening Google docs with PDF url = $googleDocsUrl');
     final Uri uri = Uri.parse(googleDocsUrl);
     launchUrl(uri);
-  }
+  }*/
 
-  Future<void> downloadPDF(String url) async {
+  /*Future<void> downloadPDF(String url) async {
     try {
       // Create a Dio instance
       Dio dio = Dio();
@@ -355,5 +528,88 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
     } catch (e) {
       print('Error downloading PDF: $e');
     }
+  }*/
+  Future<void> pdfviewer(String url) async {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => PDFViewerFromUrl(
+              pdfUrl: url,
+            )));
+  }
+
+  Future<void> downloadPDF(String url) async {
+    try {
+      // Create a Dio instance
+      Dio dio = Dio();
+
+      // Extract the file name from the URL
+      String fileName = url.split('/').last;
+
+      // Get the application directory (documents directory)
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String appDocPath = appDocDir.path;
+
+      // Define the full file path
+      String fullPath = '$appDocPath/$fileName';
+
+      // Download the file
+      await dio.download(url, fullPath);
+
+      print('fileName PDF downloaded to: $fullPath');
+      Fluttertoast.showToast(
+        msg: "$fileName is downloaded",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      final dbHelper = DatabaseHelper();
+
+      // Insert an employee ID
+
+      // Retrieve the employee ID
+      final employeeID = await dbHelper.getEmployeeID();
+      print("Retrieved employeeID: $employeeID");
+
+      // Insert a user token
+      print("Retrieved userToken: $userToken");
+      Stats_repo()
+          .fetchCategoryData(userToken.toString(), id, pdf_id, employeeID!);
+
+      // Save the downloaded PDF info in SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(pdf_id, fullPath);
+
+      // Update the local map and state
+      setState(() {
+        downloadedPDFs[pdf_id] = fullPath;
+      });
+    } catch (e) {
+      print('Error downloading PDF: $e');
+    }
+  }
+
+  void shareFile(String filePath) {
+    Share.shareFiles([filePath], text: 'Check out this PDF!');
   }
 }
+
+/*class PDFViewerFromUrl extends StatelessWidget {
+  final String url;
+
+  PDFViewerFromUrl({required this.url});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('PDF Viewer'),
+      ),
+      body: PDFView(
+        filePath: url,
+      ),
+    );
+  }
+}*/

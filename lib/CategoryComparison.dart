@@ -150,39 +150,49 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                           itemBuilder: (context, index) {
                             Subcategory subcategory =
                                 category.subcategories[index];
-                            return Card(
-                              color: Colors.white,
-                              elevation: 3,
+                            return Container(
+                              //color: Colors.white,
+                              //elevation: 3,
                               child: Container(
-                                color: Colors.white,
+                                //color: Colors.white,
                                 padding: EdgeInsets.all(2.sp),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      height: 8.h,
-                                      padding: EdgeInsets.all(8.sp),
-                                      margin: EdgeInsets.only(bottom: 10.sp),
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFFFEAEA),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(5.sp),
-                                          topRight: Radius.circular(5.sp),
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(5.sp)),
+                                      // Color applied here
+                                      margin: EdgeInsets.only(bottom: 5.sp),
+                                      child: Container(
+                                        height: 8.h,
+                                        padding: EdgeInsets.all(10.sp),
+                                        margin: EdgeInsets.all(3.sp),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFFFEAEA),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(5.sp),
+                                            topRight: Radius.circular(5.sp),
+                                            bottomLeft: Radius.circular(5.sp),
+                                            bottomRight: Radius.circular(5.sp),
+                                          ),
                                         ),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          subcategory.name,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12.sp,
-                                            color: Colors.black,
+                                        child: Center(
+                                          child: Text(
+                                            subcategory.name,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12.sp,
+                                              color: Colors.black,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                     Wrap(
-                                      spacing: 1.w,
+                                      spacing: 5.w,
                                       runSpacing: 1.h,
                                       children: subcategory.colorCodes
                                           .asMap()
@@ -203,22 +213,80 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                                               i,
                                               Column(
                                                 children: [
-                                                  GestureDetector(
+                                                  Container(
+                                                    /*  margin: EdgeInsets.only(
+                                                        top: 8.sp),*/
+                                                    // color: Colors.white,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    5.sp)),
                                                     child: Center(
                                                         child: Container(
-                                                      /* margin: EdgeInsets.only(
-                                                        bottom: 5.sp),*/
+                                                            //   color: Colors.white,
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    left: 5.sp),
+                                                            child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                children: [
+                                                                  Expanded(
+                                                                      child:
+                                                                          Container(
+                                                                    child: Text(
+                                                                      colorCode
+                                                                          .title,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            10.sp,
+                                                                        color: Colors
+                                                                            .black,
+                                                                      ),
+                                                                    ),
+                                                                  )),
+                                                                  IconButton(
+                                                                    icon: Icon(
+                                                                      Icons
+                                                                          .download_for_offline_outlined,
+                                                                      size:
+                                                                          18.sp,
+                                                                      color: Colors
+                                                                          .blue,
+                                                                    ),
+                                                                    onPressed:
+                                                                        () async {
+                                                                      Navigator
+                                                                          .push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              PDFSubCategory(
+                                                                            id: id,
+                                                                            code:
+                                                                                code.toString(),
+                                                                            subcat_id:
+                                                                                subcategory.id.toString(),
+                                                                            color_id:
+                                                                                colorCode.id,
+                                                                            categoryName:
+                                                                                categoryName.toString(),
+                                                                            color_code_id:
+                                                                                "0",
+                                                                          ),
+                                                                        ),
+                                                                      );
 
-                                                      child: Text(
-                                                        colorCode.title,
-                                                        style: TextStyle(
-                                                          fontSize: 10.sp,
-                                                          color: Colors.black,
-                                                        ),
-                                                      ),
-                                                    )),
-                                                    onTap: () {
-                                                      Navigator.push(
+                                                                      // Handle the download action
+                                                                    },
+                                                                  ),
+                                                                ]))),
+                                                    /* onTap: () {
+                                                      */ /* Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
                                                           builder: (context) =>
@@ -237,10 +305,10 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                                                             color_code_id: "0",
                                                           ),
                                                         ),
-                                                      );
-                                                    },
+                                                      );*/ /*
+                                                    },*/
                                                   ),
-                                                  if (i <
+                                                  /* if (i <
                                                       subcategory.colorCodes
                                                               .length -
                                                           1)
@@ -251,7 +319,7 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                                                         child: Divider(
                                                           color: Colors.black,
                                                           thickness: 0.9,
-                                                        )),
+                                                        )),*/
                                                 ],
                                               ),
                                             );

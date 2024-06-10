@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Pigments.dart';
 import 'package:sudapedia/SendOTP.dart';
+import 'package:sudapedia/SessionTimeoutManager.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,16 +40,36 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  @override
+  /*@override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    Timer(
+    // _navigateToNextScreen();
+    */ /* Timer(
         Duration(seconds: 3),
         () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SendOTP())));
-    //context, MaterialPageRoute(builder: (context) => HomeScreen()))); //mainCategory: 'Applications',))));
+            context, MaterialPageRoute(builder: (context) => SendOTP())));*/ /*
+  }*/
+
+  void initState() {
+    super.initState();
+    Timer(Duration(seconds: 3), () => _checkSession());
+  }
+
+  void _checkSession() async {
+    bool isLoggedIn = await SessionManager.isUserLoggedIn();
+    print("isLoggedIn:" + isLoggedIn.toString());
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Pigments()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SendOTP()),
+      );
+    }
   }
 
   @override

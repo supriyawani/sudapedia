@@ -1,10 +1,16 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/CategoryComparison.dart';
 import 'package:sudapedia/CategoryDetails.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Model/CategoriesResponse.dart';
+import 'package:sudapedia/SendOTP.dart';
+import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/SubCategory.dart';
 import 'package:sudapedia/SubCategoryButtons.dart';
 import 'package:sudapedia/repository/Category_repo.dart';
@@ -21,12 +27,65 @@ class _HomeScreenState extends State<HomeScreen> {
   Stream<List<CategoriesResponse>> _categoriesStream = Stream.value([]);
   String? userToken, employeeId;
   //late Future<void> _initTokenFuture;
+  Timer? _logoutTimer;
 
   @override
   void initState() {
     super.initState();
     getToken();
+    //_startLogoutTimer();
     //  _categoriesStream = categoryRepo.getCategoryStream(userToken!);
+  }
+
+  @override
+  void dispose() {
+    //_logoutTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startLogoutTimer() async {
+    const logoutDuration = Duration(minutes: 30);
+    if (!(await SessionManager.isUserLoggedIn())) {
+      return;
+    }
+
+    _logoutTimer = Timer(logoutDuration, _logoutUser);
+  }
+
+  void _logoutUser() async {
+    var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+    var body = {
+      'employee_id': employeeId,
+      'UserToken': userToken,
+      'apiKey': "8c961641025d48b7b89d475054d656da"
+    };
+
+    var response = await http.post(
+        Uri.parse("https://sudapedia.sudarshan.com/Admin/web-api/logout.php"),
+        headers: headers,
+        body: body);
+    print(response.body.toString());
+    print(response.body);
+    if (response.body.contains("Logout Successfully !!")) {
+      final jsonResponse = jsonDecode(response.body);
+      if (jsonResponse['msg'] == 'Logout Successfully !!') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(jsonResponse['msg'])),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SendOTP()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Logout failed: ${jsonResponse['msg']}')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to connect to the server')),
+      );
+    }
   }
 
   Future<void> getToken() async {
@@ -63,10 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
               left: 0,
               right: 0,
               child: Container(
-                width: double.infinity, // Span the full width
+                //  width: double.infinity, // Span the full width
                 child: Image.asset(
                   'assets/appbar_logo.png',
-                  fit: BoxFit.contain, // Adjust fit as needed
+                  fit: BoxFit.cover, // Adjust fit as needed
                 ),
               ),
             ),

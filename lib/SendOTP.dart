@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/repository/Login_repo.dart';
 
 import 'Login.dart';
@@ -32,10 +33,12 @@ class _SendOTPState extends State<SendOTP> {
   }
 
   void _sendOTP() async {
+    Constant.displayToast("You will receive the OTP on registered email id.");
     if (_formKey.currentState!.validate()) {
       _loadingController.add(true);
 
       var apiProvider = Login_repo();
+      print("_employeeIDController.text:" + _employeeIDController.text);
       var response = await apiProvider.getLogin(_employeeIDController.text);
 
       _loadingController.add(false);

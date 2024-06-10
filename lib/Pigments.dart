@@ -1,7 +1,14 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/HomeScreen.dart';
+import 'package:sudapedia/SendOTP.dart';
+import 'package:sudapedia/SessionTimeoutManager.dart';
 
 class Pigments extends StatefulWidget {
   @override
@@ -10,15 +17,16 @@ class Pigments extends StatefulWidget {
 
 class _PigmentsState extends State<Pigments> {
   final _formKey = GlobalKey<FormState>();
-
+  String? userToken, employeeId;
   var isLoading = false;
-
+  Timer? _logoutTimer;
   bool _isMounted = false;
   // String? Token;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _startLogoutTimer();
     setState(() {});
     // getToken();
     // print("Tocken:" + Token!);
@@ -28,7 +36,21 @@ class _PigmentsState extends State<Pigments> {
   void dispose() {
     // TODO: implement dispose
     _isMounted = false;
+    _logoutTimer?.cancel();
     super.dispose();
+  }
+
+  void _startLogoutTimer() async {
+    const logoutDuration = Duration(minutes: 30);
+    if (!(await SessionManager.isUserLoggedIn())) {
+      return;
+    }
+    getToken();
+    print("userToken:" + userToken.toString());
+    print("employeeID:" + employeeId.toString());
+
+    _logoutTimer = Timer(logoutDuration,
+        _logout(employeeId.toString(), userToken!) as void Function());
   }
 
   @override
@@ -43,7 +65,7 @@ class _PigmentsState extends State<Pigments> {
               padding: EdgeInsets.all(0),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              margin: EdgeInsets.only(top: 10),
+              //margin: EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
@@ -53,12 +75,14 @@ class _PigmentsState extends State<Pigments> {
                 ),
               ),
             ),
-            Column(
+            /*Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                     child: Container(
-                      margin: EdgeInsets.all(20.sp),
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(left: 20.sp, right: 20.sp),
+                      //margin: EdgeInsets.all(20.sp),
                       child: SvgPicture.asset(
                         "assets/pigments.svg",
                       ),
@@ -70,10 +94,95 @@ class _PigmentsState extends State<Pigments> {
                           MaterialPageRoute(
                               builder: (context) => HomeScreen()));
                     }),
+
+              ],
+            )*/
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin:
+                        EdgeInsets.only(top: 65.sp, left: 20.sp, right: 20.sp),
+                    // margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                    child: SvgPicture.asset(
+                      "assets/pigments.svg",
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomeScreen(),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 20.sp), // Space between the images
+                GestureDetector(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                    child: SvgPicture.asset(
+                      "assets/logout.svg",
+                    ),
+                  ),
+                  onTap: () async {
+                    getToken();
+                    print("userToken:" + userToken.toString());
+                    print("employeeID:" + employeeId.toString());
+                    _logout(employeeId.toString(), userToken!);
+                  },
+                ),
               ],
             )
           ]));
     });
+  }
+
+  Future<void> getToken() async {
+    userToken = (await DatabaseHelper().getToken());
+    employeeId = (await DatabaseHelper().getEmployeeID());
+    //userToken = "1E5O3tCJuz03bib";
+    print("Token:" + userToken!);
+    // _categoriesStream = categoryRepo.getCategoryStream(userToken.toString());
+  }
+
+  Future<void> _logout(String employeeId, String token) async {
+    var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+    var body = {
+      'employee_id': employeeId,
+      'UserToken': token,
+      'apiKey': "8c961641025d48b7b89d475054d656da"
+    };
+
+    var response = await http.post(
+        Uri.parse("https://sudapedia.sudarshan.com/Admin/web-api/logout.php"),
+        headers: headers,
+        body: body);
+    print(response.body.toString());
+    print(response.body);
+    if (response.body.contains("Logout Successfully !!")) {
+      final jsonResponse = jsonDecode(response.body);
+      if (jsonResponse['msg'] == 'Logout Successfully !!') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(jsonResponse['msg'])),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SendOTP()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Logout failed: ${jsonResponse['msg']}')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to connect to the server')),
+      );
+    }
   }
 
   buildColumn() {

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Pigments.dart';
+import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/repository/Otp_repo.dart';
 
 class Login extends StatefulWidget {
@@ -22,10 +23,11 @@ class _LoginState extends State<Login> {
   late String _Otp;
   String _employeeID = ''; // Initialize with an empty string
   var isLoading = false;
-
+  //late SessionManager _sessionTimeoutManager;
   @override
   void initState() {
     super.initState();
+    // _sessionTimeoutManager = SessionManager();
     _employeeIDController = TextEditingController();
     _loadEmployeeID();
   }
@@ -70,6 +72,13 @@ class _LoginState extends State<Login> {
           // await dbHelper.insertToken(response.userToken.toString());
           bool success =
               await dbHelper.insertToken1(response.userToken.toString());
+          await dbHelper.insertEmployeeID(_employeeID);
+          /* if (_employeeID != null) {
+            await dbHelper.insertEmployeeID(_employeeID.toString());
+            print("_employeeID:" + _employeeID.toString());
+          } else {
+            print("Error: _employeeID is null");
+          }*/
 
           if (success) {
             print("User token inserted successfully!");
@@ -78,7 +87,11 @@ class _LoginState extends State<Login> {
           }
           //  await dbHelper.insertEmployeeID(_employeeIDController.text.toString());
           print("User token inserted successfully!");
-          Navigator.push(
+          //_sessionTimeoutManager.startSession(context);
+          _saveLoginInfo();
+          await SessionManager.setLoginTime(
+              DateTime.now(), response.userToken.toString());
+          Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Pigments()));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -91,6 +104,12 @@ class _LoginState extends State<Login> {
         );
       }
     }
+  }
+
+  void _saveLoginInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+    // Other login information storage
   }
 
   @override
