@@ -8,7 +8,9 @@ import 'package:path_provider/path_provider.dart';
 class PDFViewerFromUrl extends StatefulWidget {
   final String pdfUrl;
 
-  PDFViewerFromUrl({required this.pdfUrl});
+  PDFViewerFromUrl({
+    required this.pdfUrl,
+  });
 
   @override
   _PDFViewerFromUrlState createState() => _PDFViewerFromUrlState();
@@ -57,9 +59,9 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /*  appBar: AppBar(
         title: Text('PDF Viewer'),
-      ),
+      ),*/
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : localPath != null

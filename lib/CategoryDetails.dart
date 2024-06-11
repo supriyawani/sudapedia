@@ -4,9 +4,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-//import 'package:open_file/open_file.dart';
-import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +19,7 @@ class CategoryDetails extends StatefulWidget {
   String id, code;
 
   CategoryDetails({required this.id, required this.code});
+
   @override
   _CategoryDetailsState createState() => _CategoryDetailsState(id, code);
 }
@@ -39,10 +37,12 @@ class _CategoryDetailsState extends State<CategoryDetails> {
   bool isDownloaded = false;
   String downloadedFilePath = '';
   Map<String, String> downloadedPDFs = {};
+
   _CategoryDetailsState(String id, String code) {
     this.id = id;
     this.code = code;
   }
+
   @override
   initState() {
     super.initState();
@@ -93,6 +93,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
     getCategoryName();
     print("Token:" + userToken!);
   }
+
   // _CategoryDetailsState(this.id);
 
   loadPosts() async {
@@ -207,10 +208,10 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                         child: CircularProgressIndicator());
                                   }
 
-                                  bool isDownloaded = snapshot.data!;
+                                  //  bool isDownloaded = snapshot.data!;
                                   return GestureDetector(
                                       onTap: () async {
-                                        if (isDownloaded) {
+                                        /*  if (isDownloaded) {
                                           print("ontap isDownloaded");
                                           final prefs = await SharedPreferences
                                               .getInstance();
@@ -218,20 +219,18 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                               dataList[index].id.toString())!;
                                           //openPDF(filePath);
                                           await OpenFilex.open(filePath);
-                                        } else {
-                                          print("ontap");
-                                          pdf_id =
-                                              dataList[index].id.toString();
-                                          String pdfurl =
-                                              Constant.url_pdf_path +
-                                                  dataList[index].pDFPath;
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PDFViewerFromUrl(
-                                                        pdfUrl: pdfurl,
-                                                      )));
-                                        }
+                                        } else {*/
+                                        /*  print("ontap");
+                                        pdf_id = dataList[index].id.toString();
+                                        String pdfurl = Constant.url_pdf_path +
+                                            dataList[index].pDFPath;
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PDFViewerFromUrl(
+                                                      pdfUrl: pdfurl,
+                                                    )));*/
+                                        // }
                                       },
                                       child: Container(
                                         margin: EdgeInsets.only(
@@ -257,7 +256,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    Flexible(
+                                                    Expanded(
                                                         child: Text(
                                                       dataList[index].pDFName ??
                                                           'No Name',
@@ -269,8 +268,56 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                                             0xFFE97132), // Replace with your desired color
                                                       ),
                                                     )),
-                                                    isDownloaded
-                                                        ? IconButton(
+                                                    /*  Container(
+                                                        child: IconButton(
+                                                      icon: Icon(
+                                                          Icons
+                                                              .download_for_offline_outlined,
+                                                          size: 18.sp,
+                                                          color: Colors.blue),
+                                                      onPressed: () async {
+                                                        pdf_id = dataList[index]
+                                                            .id
+                                                            .toString();
+                                                        await downloadPDF(Constant
+                                                                .url_pdf_path +
+                                                            dataList[index]
+                                                                .pDFPath);
+                                                      },
+                                                    )),*/
+                                                    GestureDetector(
+                                                      child: Container(
+                                                          margin:
+                                                              EdgeInsets.all(
+                                                                  5.sp),
+                                                          child: Text(
+                                                            "show",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .blue),
+                                                          )),
+                                                      onTap: () {
+                                                        pdf_id = dataList[index]
+                                                            .id
+                                                            .toString();
+                                                        String pdfurl = Constant
+                                                                .url_pdf_path +
+                                                            dataList[index]
+                                                                .pDFPath;
+                                                        Navigator.of(context).push(
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        PDFViewerFromUrl(
+                                                                          pdfUrl:
+                                                                              pdfurl,
+                                                                        )));
+                                                      },
+                                                    ),
+                                                    Container(
+                                                        margin: EdgeInsets.all(
+                                                            5.sp),
+                                                        child: IconButton(
                                                             icon: Icon(
                                                                 Icons.share,
                                                                 size: 18.sp,
@@ -278,39 +325,33 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                                                     .blue),
                                                             onPressed:
                                                                 () async {
-                                                              final prefs =
-                                                                  await SharedPreferences
-                                                                      .getInstance();
-                                                              String filePath =
-                                                                  prefs.getString(
-                                                                      dataList[
-                                                                              index]
-                                                                          .id
-                                                                          .toString())!;
-                                                              shareFile(
-                                                                  filePath);
-                                                            },
-                                                          )
-                                                        : IconButton(
-                                                            icon: Icon(
-                                                                Icons
-                                                                    .download_for_offline_outlined,
-                                                                size: 18.sp,
-                                                                color: Colors
-                                                                    .blue),
-                                                            onPressed:
-                                                                () async {
-                                                              pdf_id = dataList[
-                                                                      index]
-                                                                  .id
-                                                                  .toString();
-                                                              await downloadPDF(Constant
-                                                                      .url_pdf_path +
-                                                                  dataList[
+                                                              if (downloadedPDFs
+                                                                  .containsKey(dataList[
                                                                           index]
-                                                                      .pDFPath);
-                                                            },
-                                                          ),
+                                                                      .id
+                                                                      .toString())) {
+                                                                shareFile(downloadedPDFs[
+                                                                    dataList[
+                                                                            index]
+                                                                        .id
+                                                                        .toString()]!);
+                                                              } else {
+                                                                pdf_id = dataList[
+                                                                        index]
+                                                                    .id
+                                                                    .toString();
+                                                                await downloadPDF(Constant
+                                                                        .url_pdf_path +
+                                                                    dataList[
+                                                                            index]
+                                                                        .pDFPath);
+                                                                shareFile(downloadedPDFs[
+                                                                    dataList[
+                                                                            index]
+                                                                        .id
+                                                                        .toString()]!);
+                                                              }
+                                                            })),
                                                   ],
                                                 ),
                                               ),
@@ -374,8 +415,29 @@ class _CategoryDetailsState extends State<CategoryDetails> {
 
   Future<void> downloadPDF(String url) async {
     try {
-      // Create a Dio instance
       Dio dio = Dio();
+      String fileName = url.split('/').last;
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String appDocPath = appDocDir.path;
+      String fullPath = '$appDocPath/$fileName';
+      await dio.download(url, fullPath);
+
+      setState(() {
+        downloadedPDFs[pdf_id] = fullPath;
+      });
+
+      final dbHelper = DatabaseHelper();
+      final employeeID = await dbHelper.getEmployeeID();
+      Stats_repo()
+          .fetchCategoryData(userToken.toString(), id, pdf_id, employeeID!);
+    } catch (e) {
+      print('Error downloading PDF: $e');
+    }
+  }
+  /* Future<void> downloadPDF(String url) async {
+    try {
+      // Create a Dio instance
+      */ /*   Dio dio = Dio();
 
       // Extract the file name from the URL
       String fileName = url.split('/').last;
@@ -421,13 +483,59 @@ class _CategoryDetailsState extends State<CategoryDetails> {
       // Update the local map and state
       setState(() {
         downloadedPDFs[pdf_id] = fullPath;
+      });*/ /*
+      var time = DateTime.now().microsecondsSinceEpoch;
+      String fileName = url.split('/').last;
+      var path = "/storage/emulated/0/Download";
+      var file = File(path);
+
+      String fullPath = '$path/$fileName';
+      Dio dio = Dio();
+      // Download the file
+      await dio.download(url, fullPath);
+      print('fileName PDF downloaded to: $fullPath');
+      Fluttertoast.showToast(
+        msg: "$fileName is downloaded",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      isDownloaded = true;
+      final dbHelper = DatabaseHelper();
+      final employeeID = await dbHelper.getEmployeeID();
+      print("Retrieved employeeID: $employeeID");
+
+      // Insert a user token
+      print("Retrieved userToken: $userToken");
+      Stats_repo()
+          .fetchCategoryData(userToken.toString(), id, pdf_id, employeeID!);
+
+      // Save the downloaded PDF info in SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(pdf_id, fullPath);
+
+      // Update the local map and state
+      setState(() {
+        downloadedPDFs[pdf_id] = fullPath;
       });
     } catch (e) {
       print('Error downloading PDF: $e');
     }
-  }
+  }*/
 
   void shareFile(String filePath) {
-    Share.shareFiles([filePath], text: 'Check out this PDF!');
+    // Share.shareFiles([filePath], text: 'Check out this PDF!');
+    if (filePath != null) {
+      Share.shareFiles([filePath], text: 'Check out this PDF!');
+    } else {
+      print("File path is null. Cannot share the file.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please download the pdf')),
+      );
+      //   Constant.displayToast("Please download the pdf");
+    }
   }
 }
