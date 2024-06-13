@@ -13,6 +13,8 @@ class Constant {
   static String url_subcategoryButtons = "SubCategoryButtons.php";
   static String url_subcategoryButtonsDetails = "SubCategoryButtonsDetails.php";
 
+  static String url_notification = "notification.php";
+
   static Color getColor(String code) {
     switch (code) {
       case 'A':
@@ -53,6 +55,62 @@ class Constant {
       backgroundColor: Colors.grey,
       textColor: Colors.white,
       fontSize: 16.0,
+    );
+  }
+
+  LinearGradient getGradient(String code) {
+    List<Color> colors = [];
+    List<double> stops = [];
+    switch (code) {
+      case 'A':
+        colors = [Color(0xFFFFC6C6), Color(0xFFFF8888)];
+        stops = [0.0, 1.0];
+        break;
+      case 'B':
+        colors = [Color(0xFFFFD4A3), Color(0xFFFFBB6D)];
+        stops = [0.0, 1.0];
+        break;
+      case 'C':
+        colors = [Color(0xFFBFFFE8), Color(0xFF38FFB7)];
+        stops = [0.0, 1.0];
+        break;
+      case 'D':
+        colors = [Color(0xFFD8FFA6), Color(0xFFACFF42)];
+        stops = [0.60, 1.0];
+        break;
+      case 'E':
+        colors = [Color(0xFF92C4FF), Color(0xFF50A0FF)];
+        stops = [0.0, 1.0];
+        break;
+      case 'F':
+        colors = [Color(0xFFD2FCFF), Color(0xFF71F7FF)];
+        stops = [0.45, 1.0];
+        break;
+      case 'G':
+        colors = [Color(0xFF), Color(0xFF)];
+        stops = [0.0, 0.1];
+        break;
+      case 'H':
+        colors = [Color(0xFFDBADFF), Color(0xFFC478FF)];
+        stops = [0.0, 1.0];
+        break;
+      case 'I':
+        colors = [Color(0xFFFF9B9B), Color(0xFFFF6464)];
+        stops = [0.26, 1.0];
+        break;
+      case 'J':
+        colors = [Color(0xFFFFA4C5), Color(0xFFFF5A95)];
+        stops = [0.0, 1.0];
+        break;
+      // Add more cases for other color codes as needed
+      default:
+        colors = [Colors.black, Colors.black];
+    }
+
+    return LinearGradient(
+      colors: colors,
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
     );
   }
 }

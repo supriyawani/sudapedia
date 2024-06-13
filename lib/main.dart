@@ -55,6 +55,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState() {
     super.initState();
+/*    Timer(
+        Duration(seconds: 3),
+        () => Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => SendOTP())));*/
     Timer(Duration(seconds: 3), () => _checkSession());
   }
 
@@ -70,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       Navigator.pushReplacement(
         context,
+        // MaterialPageRoute(builder: (context) => SendOTP()),
         MaterialPageRoute(builder: (context) => SendOTP()),
       );
     }

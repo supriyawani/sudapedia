@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
+import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/SubCategoryButtons.dart';
 import 'package:sudapedia/repository/CategoryDetails_repo.dart';
 
@@ -87,150 +88,187 @@ class _SubCategoryState extends State<SubCategory> {
     });
   }
 
+  Color innerDropShadowColor = Color(0xFF221750);
+  Color innerShadowColor = Color(0xFF18174E);
+
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return Scaffold(
-        key: _scaffoldKey,
-        body: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(0),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              margin: EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/background_image.png"),
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-            Container(
-              child: Column(
-                children: [
-                  Container(
-                    color: Constant.getColor(code.toString()),
-                    width: double.infinity, // Span the full width
-                    child: Image.asset(
-                      'assets/appbar_logo.png',
-                      fit: BoxFit.contain, // Adjust fit as needed
+    return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
+        child: WillPopScope(onWillPop: () async {
+          SessionTimeoutManager.resetLogoutTimer(context);
+          return true;
+        }, child: Sizer(builder: (context, orientation, deviceType) {
+          return Scaffold(
+            key: _scaffoldKey,
+            body: Stack(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  margin: EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/background_image.png"),
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
-                    color: Constant.getColor(code.toString()),
-                    width: double.infinity,
-                    child: Center(
-                      child: Text(
-                        categoryName.toString(),
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          //fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                ),
+                Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        color: Constant.getColor(code.toString()),
+                        width: double.infinity, // Span the full width
+                        child: Image.asset(
+                          'assets/appbar_logo.png',
+                          fit: BoxFit.contain, // Adjust fit as needed
                         ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                      child: StreamBuilder(
-                    stream: _postsController!.stream,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<dynamic> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (snapshot.hasError) {
-                        print("Error: ${snapshot.error}");
-                        return Center(
+                      Container(
+                        padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
+                        color: Constant.getColor(code.toString()),
+                        width: double.infinity,
+                        child: Center(
                           child: Text(
-                            "Error fetching data",
-                            style: TextStyle(color: Colors.red),
+                            categoryName.toString(),
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              //fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
-                        );
-                      } else if (snapshot.hasData && snapshot.data != null) {
-                        print("Data: ${snapshot.data}");
-                        List<dynamic> dataList = snapshot.data;
-                        return Container(
-                            margin: EdgeInsets.only(top: 50.sp),
-                            // alignment: Alignment.topCenter,
-                            child: ListView.builder(
-                                //physics: NeverScrollableScrollPhysics(),
-                                physics: ScrollPhysics(),
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                itemCount: dataList.length,
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    child: Container(
-                                      margin: EdgeInsets.only(
-                                          left: 10.sp,
-                                          right: 10.sp,
-                                          top: 15.sp),
-                                      child: Stack(
-                                        children: [
-                                          Positioned.fill(
-                                            child: SvgPicture.asset(
-                                              "assets/subcategory_application.svg",
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                          ListTile(
-                                            contentPadding: EdgeInsets.only(
-                                                left: 15.sp,
-                                                right: 15.sp,
-                                                bottom: 10.sp,
-                                                top: 10.sp),
-                                            title: Center(
-                                                child: Text(
-                                              dataList[index].subCategoryName ??
-                                                  'No Name',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 15.sp,
-                                                fontWeight: FontWeight.bold,
-                                                // Replace with your desired color
+                        ),
+                      ),
+                      Expanded(
+                          child: StreamBuilder(
+                        stream: _postsController!.stream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<dynamic> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.hasError) {
+                            print("Error: ${snapshot.error}");
+                            return Center(
+                              child: Text(
+                                "Error fetching data",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                          } else if (snapshot.hasData &&
+                              snapshot.data != null) {
+                            print("Data: ${snapshot.data}");
+                            List<dynamic> dataList = snapshot.data;
+                            return Container(
+                                //  margin: EdgeInsets.only(top: 50.sp),
+                                margin: EdgeInsets.only(top: 10.sp),
+                                // alignment: Alignment.topCenter,
+                                child: ListView.builder(
+                                    //physics: NeverScrollableScrollPhysics(),
+                                    physics: ScrollPhysics(),
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.zero,
+                                    itemCount: dataList.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              left: 10.sp,
+                                              right: 10.sp,
+                                              top: 15.sp),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15.sp),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Color(0xFF221750)
+                                                    .withOpacity(
+                                                        0.10), // Opacity adjusted based on Figma value
+                                                offset: Offset(0, 3),
+                                                blurRadius: 6,
+                                                spreadRadius: 0,
                                               ),
-                                            )),
+                                              /*  BoxShadow(
+                                                color: Color(0xFF18174E)
+                                                    .withOpacity(
+                                                        0.25), // Opacity adjusted based on Figma value
+                                                offset: Offset(0, 3),
+                                                blurRadius: 4,
+                                                spreadRadius: 0,
+                                              ),*/
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              SubCategoryButtons(
-                                            categoryName:
-                                                categoryName.toString(),
-                                            id: id,
-                                            code: code.toString(),
-                                            subcat_id: dataList[index].id,
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: SvgPicture.asset(
+                                                  "assets/subcategory_application.svg",
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
+                                              ListTile(
+                                                contentPadding: EdgeInsets.only(
+                                                    left: 5.sp,
+                                                    right: 5.sp,
+                                                    bottom: 10.sp,
+                                                    top: 10.sp),
+                                                title: Center(
+                                                    child: Text(
+                                                  dataList[index]
+                                                          .subCategoryName ??
+                                                      'No Name',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    // fontSize: 15.sp,
+                                                    fontSize: 13.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                    // Replace with your desired color
+                                                  ),
+                                                )),
+                                              ),
+                                            ],
                                           ),
                                         ),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SubCategoryButtons(
+                                                categoryName:
+                                                    categoryName.toString(),
+                                                id: id,
+                                                code: code.toString(),
+                                                subcat_id: dataList[index].id,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       );
-                                    },
-                                  );
-                                }));
-                      } else {
-                        return Center(
-                          child: Text(
-                            "No data available",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        );
-                      }
-                    },
-                  )),
-                ],
-              ),
-            )
-          ],
-        ),
-      );
-    });
+                                    }));
+                          } else {
+                            return Center(
+                              child: Text(
+                                "No data available",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            );
+                          }
+                        },
+                      )),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        })));
   }
 }

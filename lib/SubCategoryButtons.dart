@@ -6,6 +6,7 @@ import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Model/SubCategoryButtonResponse.dart';
+import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/SubCategoryButtonDetails.dart';
 import 'package:sudapedia/repository/SubCategoryButton_repo.dart';
 
@@ -112,139 +113,167 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
   final String bgcolor = "R254/G204/B0";
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return Scaffold(
-        key: _scaffoldKey,
-        body: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(0),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              margin: EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/background_image.png"),
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-            Container(
-              child: Column(
-                children: [
-                  Container(
-                    color: Constant.getColor(code.toString()),
-                    width: double.infinity, // Span the full width
-                    child: Image.asset(
-                      'assets/appbar_logo.png',
-                      fit: BoxFit.contain, // Adjust fit as needed
+    return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
+        child: WillPopScope(onWillPop: () async {
+          SessionTimeoutManager.resetLogoutTimer(context);
+          return true;
+        }, child: Sizer(builder: (context, orientation, deviceType) {
+          return Scaffold(
+            key: _scaffoldKey,
+            body: Stack(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  margin: EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/background_image.png"),
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
-                    color: Constant.getColor(code.toString()),
-                    width: double.infinity,
-                    child: Center(
-                      child: Text(
-                        subcategoryName.toString(),
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          //fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                ),
+                Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        color: Constant.getColor(code.toString()),
+                        width: double.infinity, // Span the full width
+                        child: Image.asset(
+                          'assets/appbar_logo.png',
+                          fit: BoxFit.contain, // Adjust fit as needed
                         ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                      child: StreamBuilder(
-                    stream: _postsController!.stream,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<dynamic> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (snapshot.hasError) {
-                        print("Error: ${snapshot.error}");
-                        return Center(
+                      Container(
+                        padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
+                        color: Constant.getColor(code.toString()),
+                        width: double.infinity,
+                        child: Center(
                           child: Text(
-                            "Error fetching data",
-                            style: TextStyle(color: Colors.red),
+                            subcategoryName.toString(),
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              //fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
-                        );
-                      } else if (snapshot.hasData && snapshot.data != null) {
-                        print("Data: ${snapshot.data}");
-                        List<dynamic> dataList = snapshot.data;
-                        return GridView.builder(
-                          padding: EdgeInsets.all(15.0),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 10.0,
-                            mainAxisSpacing: 10.0,
-                            childAspectRatio: 3 / 2,
-                          ),
-                          itemCount: dataList.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              child: Card(
-                                  child: Container(
-                                //color: parseColor(dataList[index].code),
-                                decoration: BoxDecoration(
-                                  color: parseColor1(dataList[index].code),
-                                  // color: parseColor1(bgcolor),
-                                  border: Border.all(
-                                      color: Colors.white, width: 3.0),
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: Center(
-                                    child:
-                                        Text(dataList[index].title ?? 'No Name',
+                        ),
+                      ),
+                      Expanded(
+                          child: StreamBuilder(
+                        stream: _postsController!.stream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<dynamic> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.hasError) {
+                            print("Error: ${snapshot.error}");
+                            return Center(
+                              child: Text(
+                                "Error fetching data",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                          } else if (snapshot.hasData &&
+                              snapshot.data != null) {
+                            print("Data: ${snapshot.data}");
+                            List<dynamic> dataList = snapshot.data;
+                            return GridView.builder(
+                              padding: EdgeInsets.all(15.0),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 10.0,
+                                mainAxisSpacing: 10.0,
+                                childAspectRatio: 3 / 2,
+                              ),
+                              itemCount: dataList.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  child: Card(
+                                      child: Container(
+                                    //color: parseColor(dataList[index].code),
+                                    decoration: BoxDecoration(
+                                      color: parseColor1(dataList[index].code),
+                                      // color: parseColor1(bgcolor),
+                                      border: Border.all(
+                                          color: Colors.white, width: 3.0),
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          //   color: Color(0xFF18174E)
+                                          color: Colors.white38.withOpacity(
+                                              0.25), // Opacity adjusted based on Figma value
+                                          offset: Offset(0, -3),
+                                          blurRadius: 4,
+                                          spreadRadius: 0,
+                                        ),
+                                        BoxShadow(
+                                          color: Color(0xFF221750).withOpacity(
+                                              0.18), // Opacity adjusted based on Figma value
+                                          offset: Offset(0, 2),
+                                          blurRadius: 6,
+                                          spreadRadius: 0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                        child: Text(
+                                            dataList[index].title ?? 'No Name',
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontSize: 15.sp,
                                               fontWeight: FontWeight.bold,
-                                              color: txtcolor(dataList[index].textcolor.toString()),
+                                              color: txtcolor(dataList[index]
+                                                  .textcolor
+                                                  .toString()),
                                               /*dataList[index].textcolor.toString()*/
                                               // Replace with your desired color
                                             ))),
-                              )),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        SubCategoryButtonDetails(
-                                      categoryName: subcategoryName.toString(),
-                                      id: id,
-                                      code: code.toString(),
-                                      subcat_id: subcat_id.toString(),
-                                      color_id: dataList[index].id,
-                                    ),
-                                  ),
+                                  )),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            SubCategoryButtonDetails(
+                                          categoryName:
+                                              subcategoryName.toString(),
+                                          id: id,
+                                          code: code.toString(),
+                                          subcat_id: subcat_id.toString(),
+                                          color_id: dataList[index].id,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             );
-                          },
-                        );
-                      } else {
-                        return Center(
-                          child: Text(
-                            "No data available",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        );
-                      }
-                    },
-                  )),
-                ],
-              ),
-            )
-          ],
-        ),
-      );
-    });
+                          } else {
+                            return Center(
+                              child: Text(
+                                "No data available",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            );
+                          }
+                        },
+                      )),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        })));
   }
 
   Color txtcolor(String txtcolor) {

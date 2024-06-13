@@ -33,7 +33,6 @@ class _SendOTPState extends State<SendOTP> {
   }
 
   void _sendOTP() async {
-    Constant.displayToast("You will receive the OTP on registered email id.");
     if (_formKey.currentState!.validate()) {
       _loadingController.add(true);
 
@@ -48,6 +47,8 @@ class _SendOTPState extends State<SendOTP> {
           if (response.msg.toString().contains("OTP Sent Successfully !!")) {
             //  await DatabaseHelper().insertEmployeeID(_employeeIDController.text);
             await _saveEmployeeID(_employeeIDController.text);
+            Constant.displayToast(
+                "You will receive the OTP on registered email id.");
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => Login()));
           } else {

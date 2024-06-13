@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
-import 'package:sudapedia/HomeScreen.dart';
+import 'package:sudapedia/NewHomeScreen.dart';
 import 'package:sudapedia/SendOTP.dart';
 import 'package:sudapedia/SessionTimeoutManager.dart';
 
@@ -28,10 +28,8 @@ class _PigmentsState extends State<Pigments> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _startLogoutTimer();
+    //_startLogoutTimer();
     setState(() {});
-    // getToken();
-    // print("Tocken:" + Token!);
   }
 
   @override
@@ -53,95 +51,87 @@ class _PigmentsState extends State<Pigments> {
 /*
     _logoutTimer = Timer(logoutDuration,
         _logout(employeeId.toString(), userToken!) as void Function());*/
-    SessionTimeoutManager.startLogoutTimer(context);
+    // SessionTimeoutManager.startLogoutTimer(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-    return Sizer(builder: (context, orientation, deviceType) {
-      return Scaffold(
-          key: _scaffoldKey,
-          body: Stack(children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(0),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              //margin: EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    "assets/background_image.png",
-                  ),
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-            /*Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                    child: Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(left: 20.sp, right: 20.sp),
-                      //margin: EdgeInsets.all(20.sp),
-                      child: SvgPicture.asset(
-                        "assets/pigments.svg",
+    return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
+        child: WillPopScope(onWillPop: () async {
+          SessionTimeoutManager.resetLogoutTimer(context);
+          return true;
+        }, child: Sizer(builder: (context, orientation, deviceType) {
+          return Scaffold(
+              key: _scaffoldKey,
+              body: Stack(children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  //margin: EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "assets/background_image.png",
                       ),
-                      //  fit: BoxFit.fill,
+                      fit: BoxFit.fill,
                     ),
-                    onTap: () {
-                      Navigator.push(
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      child: Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(
+                            top: 220.sp, left: 20.sp, right: 20.sp),
+                        // margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                        child: SvgPicture.asset(
+                          "assets/pigments.svg",
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => HomeScreen()));
-                    }),
-
-              ],
-            )*/
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  child: Container(
-                    alignment: Alignment.center,
-                    margin:
-                        EdgeInsets.only(top: 65.sp, left: 20.sp, right: 20.sp),
-                    // margin: EdgeInsets.symmetric(horizontal: 20.sp),
-                    child: SvgPicture.asset(
-                      "assets/pigments.svg",
+                            builder: (context) => NewHomeScreen(),
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
+                    SizedBox(height: 70.sp), // Space between the images
+                    GestureDetector(
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                        child: SvgPicture.asset(
+                          "assets/logout.svg",
+                        ),
                       ),
-                    );
-                  },
-                ),
-                SizedBox(height: 20.sp), // Space between the images
-                GestureDetector(
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20.sp),
-                    child: SvgPicture.asset(
-                      "assets/logout.svg",
+                      onTap: () async {
+                        getToken();
+                        print("userToken:" + userToken.toString());
+                        print("employeeID:" + employeeId.toString());
+                        _logout(employeeId.toString(), userToken!);
+                      },
                     ),
-                  ),
-                  onTap: () async {
-                    getToken();
-                    print("userToken:" + userToken.toString());
-                    print("employeeID:" + employeeId.toString());
-                    _logout(employeeId.toString(), userToken!);
-                  },
-                ),
-              ],
-            )
-          ]));
-    });
+                    SizedBox(height: 60.sp),
+                    GestureDetector(
+                        child: Container(
+                      alignment: Alignment.bottomCenter,
+                      // margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                      child: Image.asset(
+                        "assets/sudarshan.png",
+                      ),
+                    )),
+                  ],
+                )
+              ]));
+        })));
   }
 
   Future<void> getToken() async {

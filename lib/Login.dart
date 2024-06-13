@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Pigments.dart';
+import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/repository/Otp_repo.dart';
 
 class Login extends StatefulWidget {
@@ -72,12 +73,6 @@ class _LoginState extends State<Login> {
           bool success =
               await dbHelper.insertToken1(response.userToken.toString());
           await dbHelper.insertEmployeeID(_employeeID);
-          /* if (_employeeID != null) {
-            await dbHelper.insertEmployeeID(_employeeID.toString());
-            print("_employeeID:" + _employeeID.toString());
-          } else {
-            print("Error: _employeeID is null");
-          }*/
 
           if (success) {
             print("User token inserted successfully!");
@@ -90,6 +85,7 @@ class _LoginState extends State<Login> {
           _saveLoginInfo();
           /*await SessionManager.setLoginTime(
               DateTime.now(), response.userToken.toString());*/
+          SessionTimeoutManager.startLogoutTimer(context);
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Pigments()));
         } else {
