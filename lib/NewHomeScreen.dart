@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/CategoryComparison.dart';
 import 'package:sudapedia/CategoryDetails.dart';
@@ -221,30 +222,90 @@ class CategoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-        decoration: BoxDecoration(
-          // borderRadius: BorderRadius.circular(0.1),
-          boxShadow: [
-            BoxShadow(
-              color: Color(0xFF221750)
-                  .withOpacity(0.18), // Opacity adjusted based on Figma value
-              offset: Offset(0, 2),
-              blurRadius: 6,
-              spreadRadius: 0,
-            ),
-            /* BoxShadow(
+      /* return Container(
+          margin: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+          decoration: BoxDecoration(
+            // borderRadius: BorderRadius.circular(0.1),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xFF221750)
+                    .withOpacity(0.18), // Opacity adjusted based on Figma value
+                offset: Offset(0, 2),
+                blurRadius: 6,
+                spreadRadius: 0,
+              ),
+              */ /* BoxShadow(
               color: Color(0xFF18174E)
                   .withOpacity(0.25), // Opacity adjusted based on Figma value
               offset: Offset(0, 3),
               blurRadius: 4,
               spreadRadius: 0,
             ), -Inner boxshadow
-            */
+            */ /*
+            ],
+          ),
+          child: InnerShadow(
+            shadows: [
+              Shadow(
+                color: Color(0xFF18174E)
+                    .withOpacity(0.25), // Opacity adjusted based on Figma value
+                offset: Offset(0, 3),
+                blurRadius: 4,
+              )
+            ],
+            child: ClipRRect(
+              //   borderRadius: BorderRadius.circular(20),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: getGradient(category.code.toString()),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 10.sp,
+                  ),
+                ),
+                child: Center(
+                  child: Container(
+                    // margin: EdgeInsets.symmetric(horizontal: 15.sp),
+                    margin: EdgeInsets.only(left: 20.sp, right: 20.sp),
+                    child: Text(
+                      category.categoryName.toString(),
+                      style: TextStyle(
+                          fontSize: 50.sp,
+                          fontWeight: FontWeight.w400,
+                          // color: Colors.black54),
+                          color: Color(0xFF525252)),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ));*/
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(0.1),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFF221750).withOpacity(0.18), // Outer shadow
+              offset: Offset(0, 2),
+              blurRadius: 6,
+              spreadRadius: 0,
+            ),
           ],
         ),
+        /*  child: InnerShadow(
+            shadows: [
+              Shadow(
+                color: Color(0xFF18174E).withOpacity(0.25), // Inner shadow
+                offset: Offset(0, 3), // Adjust offset as needed
+                blurRadius: 12,
+              ),
+            ],*/
+
         child: ClipRRect(
-          //   borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           child: Container(
             decoration: BoxDecoration(
               gradient: getGradient(category.code.toString()),
@@ -254,18 +315,26 @@ class CategoryItem extends StatelessWidget {
                 width: 10.sp,
               ),
             ),
-            child: Center(
-              child: Container(
-                // margin: EdgeInsets.symmetric(horizontal: 15.sp),
-                margin: EdgeInsets.only(left: 20.sp, right: 20.sp),
-                child: Text(
-                  category.categoryName.toString(),
-                  style: TextStyle(
+            child: InnerShadow(
+              shadows: [
+                Shadow(
+                  color: Color(0xFF18174E).withOpacity(0.25), // Inner shadow
+                  offset: Offset(0, 5), // Adjust offset as needed
+                  blurRadius: 12,
+                ),
+              ],
+              child: Center(
+                child: Container(
+                  margin: EdgeInsets.only(left: 20.sp, right: 20.sp),
+                  child: Text(
+                    category.categoryName.toString(),
+                    style: TextStyle(
                       fontSize: 50.sp,
                       fontWeight: FontWeight.w400,
-                      // color: Colors.black54),
-                      color: Color(0xFF525252)),
-                  textAlign: TextAlign.center,
+                      color: Color(0xFF525252),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),
@@ -283,24 +352,7 @@ class CategoryItem extends StatelessWidget {
       case 'A':
         colors = [Color(0xFFFFC6C6), Color(0xFFFF8888)];
         stops = [0.0, 1.0];
-        boxShadow:
-        /*  [
-          BoxShadow(
-            //   color: Color(0xFF18174E)
-            color: Colors.white38
-                .withOpacity(0.25), // Opacity adjusted based on Figma value
-            offset: Offset(0, -3),
-            blurRadius: 4,
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: Color(0xFF221750)
-                .withOpacity(0.18), // Opacity adjusted based on Figma value
-            offset: Offset(0, 2),
-            blurRadius: 6,
-            spreadRadius: 0,
-          ),
-        ];*/
+
         break;
       case 'B':
         colors = [Color(0xFFFFD4A3), Color(0xFFFFBB6D)];
