@@ -30,12 +30,15 @@ class _NotificationsState extends State<Notifications> {
     // _postsController = StreamController();
     _postsController = StreamController<List<NotificationArr?>>();
     getToken();
+    setState(() {});
   }
 
   Future<void> getToken() async {
     userToken = (await DatabaseHelper().getToken())!;
     print("Token:" + userToken!);
-    loadPosts();
+    setState(() {
+      loadPosts();
+    });
   }
 
   // _CategoryDetailsState(this.id);
@@ -92,7 +95,6 @@ class _NotificationsState extends State<Notifications> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.all(8.sp),
                   child: Column(
                     children: [
                       Container(
@@ -129,7 +131,9 @@ class _NotificationsState extends State<Notifications> {
                           ),
                           onChanged: (value) {
                             //   loadPostseasrch();
-                            loadPostseasrch(value);
+                            setState(() {
+                              loadPostseasrch(value);
+                            });
                           },
                         ),
                       ),
