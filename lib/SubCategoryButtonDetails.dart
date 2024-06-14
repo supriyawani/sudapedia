@@ -178,6 +178,18 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
                             top: 10.sp),
                         //  color: getColor(code.toString()),
                         width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0xFF221750).withOpacity(
+                                  0.05), // Opacity adjusted based on Figma value
+                              offset: Offset(0, 0),
+                              blurRadius: 4,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                        ),
                         child: Stack(children: [
                           Positioned.fill(
                             child: SvgPicture.asset(
@@ -188,12 +200,7 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
                           Center(
                               child: Container(
                             alignment: Alignment.center,
-                            // padding: const EdgeInsets.all(20.0),
                             margin: EdgeInsets.all(15.sp),
-
-                            //  padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
-                            //  margin: const EdgeInsets.all(10.0),
-                            //  alignment: Alignment.center,
                             child: Text(
                               colorTitle.toString(),
                               style: TextStyle(
@@ -247,21 +254,24 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
                                         boxShadow: [
                                           BoxShadow(
                                             color: Color(0xFF221750).withOpacity(
-                                                0.08), // Opacity adjusted based on Figma value
-                                            offset: Offset(0, 2),
-                                            blurRadius: 6,
+                                                0.09), // Opacity adjusted based on Figma value
+                                            offset: Offset(0, 0),
+                                            blurRadius: 4,
                                             spreadRadius: 0,
                                           ),
-                                          /*  BoxShadow(
-                                                color: Color(0xFF18174E)
-                                                    .withOpacity(
-                                                        0.25), // Opacity adjusted based on Figma value
-                                                offset: Offset(0, 3),
-                                                blurRadius: 4,
-                                                spreadRadius: 0,
-                                              ),*/
                                         ],
                                       ),
+                                      /* child: InnerShadow(
+                                          shadows: [
+                                            Shadow(
+                                              color: Color(0xFF18174E)
+                                                  .withOpacity(
+                                                      0.25), // Inner shadow
+                                              offset: Offset(0,
+                                                  2), // Adjust offset as needed
+                                              blurRadius: 4,
+                                            ),
+                                          ],*/
                                       child: Stack(children: [
                                         Positioned.fill(
                                           child: SvgPicture.asset(

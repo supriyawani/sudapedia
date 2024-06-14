@@ -156,7 +156,7 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                             subcategoryName.toString(),
                             style: TextStyle(
                               fontSize: 18.sp,
-                              //fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: Colors.black,
                             ),
                           ),
@@ -223,6 +223,17 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                                         ),
                                       ],
                                     ),
+                                    /* child: InnerShadow(
+                                        shadows: [
+                                          Shadow(
+                                            color: Color(0xFF18174E)
+                                                .withOpacity(
+                                                    0.25), // Inner shadow
+                                            offset: Offset(0,
+                                                -2), // Adjust offset as needed
+                                            blurRadius: 4,
+                                          ),
+                                        ],*/
                                     child: Center(
                                         child: Text(
                                             dataList[index].title ?? 'No Name',

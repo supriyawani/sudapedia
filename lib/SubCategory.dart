@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -203,38 +204,51 @@ class _SubCategoryState extends State<SubCategory> {
                                               ),*/
                                             ],
                                           ),
-                                          child: Stack(
-                                            children: [
-                                              Positioned.fill(
-                                                child: SvgPicture.asset(
-                                                  "assets/subcategory_application.svg",
-                                                  fit: BoxFit.fill,
+                                          child: InnerShadow(
+                                              shadows: [
+                                                Shadow(
+                                                  color: Color(0xFF18174E)
+                                                      .withOpacity(
+                                                          0.25), // Inner shadow
+                                                  offset: Offset(0,
+                                                      2), // Adjust offset as needed
+                                                  blurRadius: 4,
                                                 ),
-                                              ),
-                                              ListTile(
-                                                contentPadding: EdgeInsets.only(
-                                                    left: 5.sp,
-                                                    right: 5.sp,
-                                                    bottom: 10.sp,
-                                                    top: 10.sp),
-                                                title: Center(
-                                                    child: Text(
-                                                  dataList[index]
-                                                          .subCategoryName ??
-                                                      'No Name',
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    // fontSize: 15.sp,
-                                                    fontSize: 13.sp,
-                                                    fontWeight: FontWeight.bold,
-                                                    // Replace with your desired color
+                                              ],
+                                              child: Stack(
+                                                children: [
+                                                  Positioned.fill(
+                                                    child: SvgPicture.asset(
+                                                      "assets/subcategory_application.svg",
+                                                      fit: BoxFit.fill,
+                                                    ),
                                                   ),
-                                                )),
-                                              ),
-                                            ],
-                                          ),
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            left: 5.sp,
+                                                            right: 5.sp,
+                                                            bottom: 10.sp,
+                                                            top: 10.sp),
+                                                    title: Center(
+                                                        child: Text(
+                                                      dataList[index]
+                                                              .subCategoryName ??
+                                                          'No Name',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        // fontSize: 15.sp,
+                                                        fontSize: 13.sp,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        // Replace with your desired color
+                                                      ),
+                                                    )),
+                                                  ),
+                                                ],
+                                              )),
                                         ),
                                         onTap: () {
                                           Navigator.push(
