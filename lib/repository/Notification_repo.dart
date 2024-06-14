@@ -44,4 +44,42 @@ class Notification_repo {
 
     return result;
   }
+
+  Future<List<NotificationArr?>> getseachNotification(
+      String userToken, String query) async {
+    var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+    var request = http.Request(
+        'POST', Uri.parse(Constant.url + Constant.url_notification));
+
+    request.bodyFields = {
+      'apiKey': "8c961641025d48b7b89d475054d656da",
+      'UserToken': userToken,
+    };
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    var res = await response.stream.bytesToString();
+    var jsonData = json.decode(res);
+
+    List<NotificationArr> result = [];
+    if (jsonData.toString().contains("Successfull !!")) {
+      final List t = jsonData['notifications_arr'];
+      final List<NotificationArr> userList =
+          t.map((item) => NotificationArr.fromJson(item)).toList();
+
+      if (query.isNotEmpty) {
+        result = userList
+            .where((element) => element.nottifications!
+                .toLowerCase()
+                .contains(query.toLowerCase()))
+            .toList();
+      } else {
+        result = userList;
+      }
+
+      print("Length " + result.length.toString());
+    }
+    return result;
+    //return responseFromJson(res);
+  }
 }
