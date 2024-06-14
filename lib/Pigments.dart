@@ -23,6 +23,7 @@ class _PigmentsState extends State<Pigments> {
   bool _isMounted = false;
   Timer? _countdownTimer;
   int _remainingTime = 2;
+
   // String? Token;
   @override
   void initState() {
@@ -81,55 +82,59 @@ class _PigmentsState extends State<Pigments> {
                     ),
                   ),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      child: Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(
-                            top: 220.sp, left: 20.sp, right: 20.sp),
-                        // margin: EdgeInsets.symmetric(horizontal: 20.sp),
-                        child: SvgPicture.asset(
-                          "assets/pigments.svg",
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NewHomeScreen(),
+                Container(
+                    margin: EdgeInsets.only(top: 100.sp),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(
+                                top: 220.sp, left: 20.sp, right: 20.sp),
+
+                            // margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                            child: SvgPicture.asset(
+                              "assets/pigments.svg",
+                            ),
                           ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 70.sp), // Space between the images
-                    GestureDetector(
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 20.sp),
-                        child: SvgPicture.asset(
-                          "assets/logout.svg",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NewHomeScreen(),
+                              ),
+                            );
+                          },
                         ),
-                      ),
-                      onTap: () async {
-                        getToken();
-                        print("userToken:" + userToken.toString());
-                        print("employeeID:" + employeeId.toString());
-                        _logout(employeeId.toString(), userToken!);
-                      },
-                    ),
-                    SizedBox(height: 60.sp),
-                    GestureDetector(
-                        child: Container(
-                      alignment: Alignment.bottomCenter,
-                      // margin: EdgeInsets.symmetric(horizontal: 20.sp),
-                      child: Image.asset(
-                        "assets/sudarshan.png",
-                      ),
-                    )),
-                  ],
-                )
+                        GestureDetector(
+                          child: Container(
+                            // margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                            margin: EdgeInsets.only(
+                                bottom: 15.sp, left: 20.sp, right: 20.sp),
+                            child: SvgPicture.asset(
+                              "assets/logout.svg",
+                            ),
+                          ),
+                          onTap: () async {
+                            getToken();
+                            print("userToken:" + userToken.toString());
+                            print("employeeID:" + employeeId.toString());
+                            _logout(employeeId.toString(), userToken!);
+                          },
+                        ),
+                        GestureDetector(
+                            child: Container(
+                          alignment: Alignment.bottomCenter,
+                          // margin: EdgeInsets.symmetric(horizontal: 20.sp,),
+                          margin: EdgeInsets.only(top: 10.sp, bottom: 50.sp),
+                          child: Image.asset(
+                            "assets/sudarshan.png",
+                          ),
+                        )),
+                      ],
+                    ))
               ]));
         })));
   }

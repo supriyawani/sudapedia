@@ -7,10 +7,10 @@ import 'package:sudapedia/SendOTP.dart';
 class SessionTimeoutManager {
   static Timer? _logoutTimer;
   static Timer? _countdownTimer;
-  static int _remainingTime = 30;
+  static int _remainingTime = 24;
 
   static void startLogoutTimer(BuildContext context) {
-    const sessionDuration = Duration(minutes: 30);
+    const sessionDuration = Duration(hours: 24);
     const countdownDuration = Duration(seconds: 30);
 
     _logoutTimer?.cancel();
@@ -24,10 +24,10 @@ class SessionTimeoutManager {
   }
 
   static void _startCountdownTimer(BuildContext context) {
-    _remainingTime = 30;
+    _remainingTime = 24;
 
     _countdownTimer?.cancel();
-    _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _countdownTimer = Timer.periodic(Duration(hours: 1), (timer) {
       if (_remainingTime > 0) {
         _remainingTime--;
       } else {
