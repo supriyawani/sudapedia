@@ -10,16 +10,23 @@ class OtpResponse {
   String? failure;
   String? msg;
   String? userToken;
+  String? notification_count;
   Result? result;
 
   OtpResponse(
-      {this.success, this.failure, this.msg, this.userToken, this.result});
+      {this.success,
+      this.failure,
+      this.msg,
+      this.userToken,
+      this.notification_count,
+      this.result});
 
   OtpResponse.fromJson(Map<String, dynamic> json) {
     success = json['Success'];
     failure = json['Failure'];
     msg = json['msg'];
     userToken = json['UserToken'];
+    notification_count = json['notification_count'];
     result =
         json['result'] != null ? new Result.fromJson(json['result']) : null;
   }
@@ -30,6 +37,7 @@ class OtpResponse {
     data['Failure'] = this.failure;
     data['msg'] = this.msg;
     data['UserToken'] = this.userToken;
+    data['notification_count'] = this.notification_count;
     if (this.result != null) {
       data['result'] = this.result!.toJson();
     }

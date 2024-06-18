@@ -83,20 +83,27 @@ class _PigmentsState extends State<Pigments> {
                   ),
                 ),
                 Container(
-                    margin: EdgeInsets.only(top: 100.sp),
+                    margin: EdgeInsets.all(50.sp),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 50.sp),
+                          child: Image.asset(
+                            "assets/Sudapedia_logo.png",
+                          ),
+                        ),
                         GestureDetector(
                           child: Container(
+                            padding: EdgeInsets.only(top: 80.sp),
                             alignment: Alignment.center,
-                            margin: EdgeInsets.only(
-                                top: 220.sp, left: 20.sp, right: 20.sp),
-
+                            // margin: EdgeInsets.only(left: 30.sp, right: 30.sp),
+                            margin: EdgeInsets.symmetric(horizontal: 5.sp),
                             // margin: EdgeInsets.symmetric(horizontal: 20.sp),
                             child: SvgPicture.asset(
                               "assets/pigments.svg",
+                              fit: BoxFit.fill,
                             ),
                           ),
                           onTap: () {
@@ -110,11 +117,11 @@ class _PigmentsState extends State<Pigments> {
                         ),
                         GestureDetector(
                           child: Container(
-                            // margin: EdgeInsets.symmetric(horizontal: 20.sp),
-                            margin: EdgeInsets.only(
-                                bottom: 15.sp, left: 20.sp, right: 20.sp),
+                            alignment: Alignment.topRight,
+                            margin: EdgeInsets.symmetric(horizontal: 5.sp),
                             child: SvgPicture.asset(
                               "assets/logout.svg",
+                              fit: BoxFit.fill,
                             ),
                           ),
                           onTap: () async {
@@ -127,8 +134,9 @@ class _PigmentsState extends State<Pigments> {
                         GestureDetector(
                             child: Container(
                           alignment: Alignment.bottomCenter,
-                          // margin: EdgeInsets.symmetric(horizontal: 20.sp,),
-                          margin: EdgeInsets.only(top: 10.sp, bottom: 50.sp),
+                          /*margin: EdgeInsets.symmetric(
+                            horizontal: 20.sp,
+                          ),*/
                           child: Image.asset(
                             "assets/sudarshan.png",
                           ),
@@ -140,7 +148,7 @@ class _PigmentsState extends State<Pigments> {
   }
 
   Future<void> getToken() async {
-    userToken = (await DatabaseHelper().getToken());
+    userToken = (await DatabaseHelper().getToken1(context));
     employeeId = (await DatabaseHelper().getEmployeeID());
     //userToken = "1E5O3tCJuz03bib";
     print("Token:" + userToken!);

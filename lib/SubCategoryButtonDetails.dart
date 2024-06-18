@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Common/BackgroundWithLogo.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Model/SubCategoryButtonResponse.dart';
@@ -72,8 +73,8 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
 
   Future<void> getToken() async {
     // userToken = (await DatabaseHelper().getToken())!;
-    userToken = await DatabaseHelper().getToken();
-
+    userToken = await DatabaseHelper().getToken1(context);
+    //userToken = "953Qi5k8I3T0voK";
     print("Token:" + userToken!);
     // _categoriesStream = categoryRepo.getCategoryStream(userToken.toString());
     setState(() {
@@ -96,7 +97,7 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
   }
 
   void getCategoryName() async {
-    SubCategoryButtonDetails_repo()
+    /*SubCategoryButtonDetails_repo()
         .getcolorTitle(
             userToken.toString(), id.toString(), subcat_id.toString(), color_id)
         .then((result) {
@@ -114,7 +115,22 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
           // Constant.displayToast("please enter valid credentials!");
         });
       }
-    });
+    });*/
+    try {
+      String? result = await SubCategoryButtonDetails_repo().getcolorTitle(
+          userToken.toString(), widget.id, subcat_id.toString(), color_id);
+      if (result != null) {
+        setState(() {
+          print("result:" + result.toString());
+          colorTitle = result.toString();
+          print("categoryName:" + colorTitle.toString());
+          loadPosts();
+        });
+      }
+    } catch (e) {
+      print("Exception occurred: $e");
+      Constant.navigatetoSendotp(context);
+    }
   }
 
   @override
@@ -130,7 +146,7 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
             key: _scaffoldKey,
             body: Stack(
               children: <Widget>[
-                Container(
+                /*  Container(
                   padding: EdgeInsets.all(0),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -141,11 +157,12 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
                       fit: BoxFit.fill,
                     ),
                   ),
-                ),
+                ),*/
+                BackgroundWithLogo(code: code),
                 Container(
                   child: Column(
                     children: [
-                      Container(
+                      /*   Container(
                         color: Constant.getColor(code.toString()),
                         width: double.infinity, // Span the full width
                         child: Image.asset(
@@ -167,7 +184,8 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
                             ),
                           ),
                         ),
-                      ),
+                      ),*/
+                      CustomAppBar(categoryName: categoryName, code: code),
                       Container(
                         padding: EdgeInsets.only(top: 5.sp, bottom: 2.sp),
                         // margin: EdgeInsets.all(15.sp),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sudapedia/Pigments.dart';
 
 class Constant {
   static String url = "https://sudapedia.sudarshan.com/Admin/web-api/";
@@ -112,5 +113,26 @@ class Constant {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
+  }
+
+  static String invalidToken = "Invalid User Token Key";
+  static void navigatetoSendotp(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Pigments()),
+      (route) => false,
+    );
+  }
+}
+
+class Utils {
+  static void handleInvalidToken(BuildContext context, dynamic error) {
+    if (error.toString().contains('Invalid User Token Key')) {
+      // Use Future.microtask to ensure the navigation is triggered
+      Future.microtask(() => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Pigments()),
+          ));
+    }
   }
 }

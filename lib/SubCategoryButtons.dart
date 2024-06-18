@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Common/BackgroundWithLogo.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Model/SubCategoryButtonResponse.dart';
@@ -65,8 +66,8 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
 
   Future<void> getToken() async {
     // userToken = (await DatabaseHelper().getToken())!;
-    userToken = await DatabaseHelper().getToken();
-
+    userToken = await DatabaseHelper().getToken1(context);
+    //userToken = "953Qi5k8I3T0voK";
     print("Token:" + userToken!);
     // _categoriesStream = categoryRepo.getCategoryStream(userToken.toString());
     setState(() {
@@ -89,7 +90,7 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
   }
 
   void getCategoryName() async {
-    SubCategoryButton_repo()
+    /*SubCategoryButton_repo()
         .getsubCategoryName(
             userToken.toString(), id.toString(), subcat_id.toString())
         .then((result) {
@@ -107,7 +108,22 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
           // Constant.displayToast("please enter valid credentials!");
         });
       }
-    });
+    });*/
+    try {
+      String? result = await SubCategoryButton_repo().getsubCategoryName(
+          userToken.toString(), widget.id, subcat_id.toString());
+      if (result != null) {
+        setState(() {
+          print("result:" + result.toString());
+          categoryName = result.toString();
+          print("categoryName:" + categoryName.toString());
+          loadPosts();
+        });
+      }
+    } catch (e) {
+      print("Exception occurred: $e");
+      Constant.navigatetoSendotp(context);
+    }
   }
 
   final String bgcolor = "R254/G204/B0";
@@ -124,7 +140,7 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
             key: _scaffoldKey,
             body: Stack(
               children: <Widget>[
-                Container(
+                /* Container(
                   padding: EdgeInsets.all(0),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -135,11 +151,12 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                       fit: BoxFit.fill,
                     ),
                   ),
-                ),
+                ),*/
+                BackgroundWithLogo(code: code),
                 Container(
                   child: Column(
                     children: [
-                      Container(
+                      /*   Container(
                         color: Constant.getColor(code.toString()),
                         width: double.infinity, // Span the full width
                         child: Image.asset(
@@ -161,7 +178,8 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                             ),
                           ),
                         ),
-                      ),
+                      ),*/
+                      CustomAppBar(categoryName: categoryName, code: code),
                       Expanded(
                           child: StreamBuilder(
                         stream: _postsController!.stream,
@@ -240,7 +258,7 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
-                                              fontSize: 15.sp,
+                                              fontSize: 13.sp,
                                               fontWeight: FontWeight.bold,
                                               color: txtcolor(dataList[index]
                                                   .textcolor

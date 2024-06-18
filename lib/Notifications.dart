@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Common/BackgroundWithLogo.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Model/NotificationResponse.dart';
@@ -34,7 +35,8 @@ class _NotificationsState extends State<Notifications> {
   }
 
   Future<void> getToken() async {
-    userToken = (await DatabaseHelper().getToken())!;
+    userToken = (await DatabaseHelper().getToken1(context))!;
+    //userToken = "953Qi5k8I3T0voK";
     print("Token:" + userToken!);
     setState(() {
       loadPosts();
@@ -44,7 +46,7 @@ class _NotificationsState extends State<Notifications> {
   // _CategoryDetailsState(this.id);
 
   loadPosts(/*[String query = ""]*/) async {
-    var apiProvider = Notification_repo();
+    /*var apiProvider = Notification_repo();
     apiProvider
         .getNotification(
       userToken.toString(),
@@ -52,7 +54,20 @@ class _NotificationsState extends State<Notifications> {
         .then((res) async {
       _postsController?.add(res);
       return res;
-    });
+    });*/
+    var apiProvider = Notification_repo();
+    try {
+      var res = await apiProvider.getNotification(userToken.toString());
+      if (res.contains(Constant.invalidToken)) {
+        Constant.navigatetoSendotp(context);
+      } else {
+        _postsController?.add(res);
+      }
+    } catch (e) {
+      print("Error loading posts: $e");
+      Constant.navigatetoSendotp(context);
+      // Handle error loading posts
+    }
   }
 
   loadPostseasrch([String query = ""]) async {
@@ -82,7 +97,7 @@ class _NotificationsState extends State<Notifications> {
             key: _scaffoldKey,
             body: Stack(
               children: <Widget>[
-                Container(
+                /* Container(
                   padding: EdgeInsets.all(0),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -93,11 +108,12 @@ class _NotificationsState extends State<Notifications> {
                       fit: BoxFit.fill,
                     ),
                   ),
-                ),
+                ),*/
+                BackgroundWithLogo(code: "A"),
                 Container(
                   child: Column(
                     children: [
-                      Container(
+                      /*  Container(
                         color: Constant.getColor("A"),
                         width: double.infinity, // Span the full width
                         child: Image.asset(
@@ -121,7 +137,8 @@ class _NotificationsState extends State<Notifications> {
                             ),
                           ),
                         ),
-                      ),
+                      ),*/
+                      CustomAppBar(categoryName: "Notifications", code: "A"),
                       Container(
                         padding: EdgeInsets.all(8.sp),
                         child: TextFormField(
@@ -147,7 +164,8 @@ class _NotificationsState extends State<Notifications> {
                               return Center(
                                 child: CircularProgressIndicator(),
                               );
-                            } else if (snapshot.hasError) {
+                            }
+                            /*else if (snapshot.hasError) {
                               print("Error: ${snapshot.error}");
                               return Center(
                                 child: Text(
@@ -155,6 +173,11 @@ class _NotificationsState extends State<Notifications> {
                                   style: TextStyle(color: Colors.red),
                                 ),
                               );
+                            } */
+                            else if (snapshot.hasError) {
+                              Utils.handleInvalidToken(context, snapshot.error);
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
                             } else if (snapshot.hasData &&
                                 snapshot.data != null) {
                               print("Data: ${snapshot.data}");

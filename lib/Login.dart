@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Pigments.dart';
-import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/repository/Otp_repo.dart';
 
 class Login extends StatefulWidget {
@@ -67,11 +66,14 @@ class _LoginState extends State<Login> {
 
       if (response != null) {
         if (response.msg.toString().contains("Login Successfully !!")) {
+          print("response" + response.toString());
           DatabaseHelper dbHelper = DatabaseHelper();
 
           // await dbHelper.insertToken(response.userToken.toString());
+          //    bool success = await dbHelper.insertToken1(response.userToken.toString());
           bool success =
               await dbHelper.insertToken1(response.userToken.toString());
+
           await dbHelper.insertEmployeeID(_employeeID);
 
           if (success) {
@@ -85,7 +87,8 @@ class _LoginState extends State<Login> {
           _saveLoginInfo();
           /*await SessionManager.setLoginTime(
               DateTime.now(), response.userToken.toString());*/
-          SessionTimeoutManager.startLogoutTimer(context);
+          //SessionTimeoutManager.startLogoutTimer(context);
+          await _savenotificationCount(response.notification_count.toString());
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Pigments()));
         } else {
@@ -99,6 +102,11 @@ class _LoginState extends State<Login> {
         );
       }
     }
+  }
+
+  Future<void> _savenotificationCount(String notificationCount) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('notificationcount', notificationCount);
   }
 
   void _saveLoginInfo() async {

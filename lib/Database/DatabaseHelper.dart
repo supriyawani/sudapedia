@@ -92,8 +92,12 @@ class DatabaseHelper {
     }
   }
 }*/
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sudapedia/SendOTP.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -118,7 +122,8 @@ class DatabaseHelper {
       version: 1,
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT)',
+          //  'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT)',
+          'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT, insertedAt INTEGER)',
         );
       },
     );
@@ -166,7 +171,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<bool> insertToken1(String userToken) async {
+  /*Future<bool> insertToken1(String userToken) async {
     try {
       final db = await database;
       final List<Map<String, dynamic>> maps = await db.query('employees');
@@ -190,15 +195,87 @@ class DatabaseHelper {
       print("Error inserting user token: $e");
       return false;
     }
+  }*/
+  Future<bool> insertToken1(String userToken) async {
+    try {
+      final db = await database;
+      final int currentTime = DateTime.now().millisecondsSinceEpoch;
+      final List<Map<String, dynamic>> maps = await db.query('employees');
+
+      if (maps.isEmpty) {
+        await db.insert(
+          'employees',
+          {'userToken': userToken, 'insertedAt': currentTime},
+        );
+      } else {
+        await db.update(
+          'employees',
+          {'userToken': userToken, 'insertedAt': currentTime},
+          where: 'id = ?',
+          whereArgs: [maps.first['id']],
+        );
+      }
+
+      return true;
+    } catch (e) {
+      print("Error inserting user token: $e");
+      return false;
+    }
   }
 
-  Future<String?> getToken() async {
+  void startTokenExpiryCheck() {
+    Timer.periodic(Duration(hours: 1), (timer) async {
+      final db = await database;
+      final int currentTime = DateTime.now().millisecondsSinceEpoch;
+      final int twentyFourHours = 24 * 60 * 60 * 1000;
+
+      final List<Map<String, dynamic>> maps =
+          await db.query('employees', columns: ['id', 'insertedAt']);
+
+      for (var map in maps) {
+        final int insertedAt = map['insertedAt'] as int;
+        if (currentTime - insertedAt > twentyFourHours) {
+          await db.delete('employees', where: 'id = ?', whereArgs: [map['id']]);
+        }
+      }
+    });
+  }
+
+  /*Future<String?> getToken() async {
     final db = await database;
     final List<Map<String, dynamic>> maps =
         await db.query('employees', columns: ['userToken']);
 
     if (maps.isNotEmpty) {
       return maps.first['userToken'] as String?;
+    } else {
+      return null;
+    }
+  }*/
+
+  Future<String?> getToken1(BuildContext context) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps =
+        await db.query('employees', columns: ['userToken', 'insertedAt']);
+
+    if (maps.isNotEmpty) {
+      final int insertedAt = maps.first['insertedAt'] as int;
+      final DateTime insertedTime =
+          DateTime.fromMillisecondsSinceEpoch(insertedAt);
+      final DateTime currentTime = DateTime.now();
+
+      // if (currentTime.difference(insertedTime).inHours >= 24) {
+      if (currentTime.difference(insertedTime).inHours >= 24) {
+        // Token is older than 24 hours, delete it and redirect to SendOTP
+        await clearUserSession();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SendOTP()),
+        );
+        return null;
+      } else {
+        return maps.first['userToken'] as String?;
+      }
     } else {
       return null;
     }

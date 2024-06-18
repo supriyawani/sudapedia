@@ -22,7 +22,9 @@ class Notification_repo {
     var jsonData = json.decode(res);
 
     List<NotificationArr?> result;
-    if (jsonData.toString().contains("Successfull !!")) {
+    if (jsonData != null && jsonData['msg'] == "Inavlid User Token Key") {
+      throw Exception('Invalid User Token Key');
+    } else if (jsonData.toString().contains("Successfull !!")) {
       // If the response is a map and contains a key 'data'
       if (jsonData.containsKey('notifications_arr')) {
         final dynamic pdfData = jsonData['notifications_arr'];

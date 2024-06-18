@@ -8,10 +8,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Common/BackgroundWithLogo.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/PDFViewerFromUrl.dart';
-import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/repository/CategoryDetails_repo.dart';
 import 'package:sudapedia/repository/Stats_repo.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -90,7 +90,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
   }
 
   Future<void> getToken() async {
-    userToken = (await DatabaseHelper().getToken())!;
+    userToken = (await DatabaseHelper().getToken1(context))!;
+    //userToken = "953Qi5k8I3T0voK";
     getCategoryName();
     print("Token:" + userToken!);
   }
@@ -108,9 +109,9 @@ class _CategoryDetailsState extends State<CategoryDetails> {
   }
 
   void getCategoryName() async {
-    CategoryDetails_repo()
-        .getCategoryName(userToken.toString(), id.toString())
-        .then((result) {
+    try {
+      String? result = await CategoryDetails_repo()
+          .getCategoryName(userToken.toString(), widget.id);
       if (result != null) {
         setState(() {
           print("result:" + result.toString());
@@ -118,30 +119,22 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           print("categoryName:" + categoryName.toString());
           loadPosts();
         });
-
-        // saveData(result);
-      } else {
-        setState(() {
-          // Constant.displayToast("please enter valid credentials!");
-        });
       }
-    });
+    } catch (e) {
+      print("Exception occurred: $e");
+
+      Constant.navigatetoSendotp(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
-        child: WillPopScope(onWillPop: () async {
-          SessionTimeoutManager.resetLogoutTimer(context);
-          return true;
-        }, child: Sizer(builder: (context, orientation, deviceType) {
-          return Scaffold(
-            key: _scaffoldKey,
-            body: Stack(
-              children: <Widget>[
-                Container(
+    return Sizer(builder: (context, orientation, deviceType) {
+      return Scaffold(
+        key: _scaffoldKey,
+        body: Stack(
+          children: <Widget>[
+            /*  Container(
                   padding: EdgeInsets.all(0),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -152,19 +145,50 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                       fit: BoxFit.fill,
                     ),
                   ),
-                ),
-                Container(
-                  child: Column(
-                    children: [
-                      Container(
+                ),*/
+            BackgroundWithLogo(
+              code: code.toString(),
+            ),
+            Container(
+              child: Column(
+                children: [
+                  /* Container(
                         color: Constant.getColor(code.toString()),
                         width: double.infinity, // Span the full width
                         child: Image.asset(
                           'assets/appbar_logo.png',
                           fit: BoxFit.contain, // Adjust fit as needed
                         ),
-                      ),
-                      Container(
+                      ),*/
+                  /*Container(
+                        color: Constant.getColor(code.toString()),
+                        width: double.infinity, // Span the full width
+                        child: Stack(
+                          children: [
+                            Image.asset(
+                              'assets/appbar_logo.png',
+                              fit: BoxFit.contain, // Adjust fit as needed
+                              width: double.infinity,
+                            ),
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              child: Container(
+                                  margin:
+                                      EdgeInsets.only(top: 38.sp, right: 10.sp),
+                                  alignment: Alignment.topLeft,
+                                  child: IconButton(
+                                    icon: Icon(Icons.arrow_back,
+                                        size: 20.sp, color: Colors.black),
+                                    onPressed: () {},
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),*/
+                  CustomAppBar(
+                      categoryName: categoryName.toString(), code: code),
+                  /*  Container(
                         alignment: Alignment.center,
                         padding: EdgeInsets.only(
                             top: 5.sp, bottom: 5.sp, left: 15.sp),
@@ -180,198 +204,185 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                             ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                          child: StreamBuilder(
-                        stream: _postsController!.stream,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<dynamic> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            print("Error: ${snapshot.error}");
-                            return Center(
-                              child: Text(
-                                "Error fetching data",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                          } else if (snapshot.hasData &&
-                              snapshot.data != null) {
-                            print("Data: ${snapshot.data}");
-                            List<dynamic> dataList = snapshot.data;
-                            return ListView.builder(
-                              //physics: NeverScrollableScrollPhysics(),
-                              physics: ScrollPhysics(),
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              itemCount: dataList.length,
-                              itemBuilder: (context, index) {
-                                return FutureBuilder<bool>(
-                                    future: isPDFDownloaded(
-                                        dataList[index].id.toString()),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return Center(
-                                            child: CircularProgressIndicator());
-                                      }
+                      ),*/
+                  /* CustomAppBar(
+                          categoryName: categoryName.toString(), code: code),*/
+                  Expanded(
+                      child: StreamBuilder(
+                    stream: _postsController!.stream,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        print("inside connectionState");
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        print("Error: ${snapshot.error}");
+                        return Center(
+                          child: Text(
+                            "Error fetching data",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      }
+                      /* else if (snapshot.hasData.toString().contains("")) {
+                        Utils.handleInvalidToken(context, snapshot.error);
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } */
+                      else if (snapshot.hasData && snapshot.data != null) {
+                        print("Data: ${snapshot.data}");
+                        List<dynamic> dataList = snapshot.data;
+                        return ListView.builder(
+                          //physics: NeverScrollableScrollPhysics(),
+                          physics: ScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: dataList.length,
+                          itemBuilder: (context, index) {
+                            return FutureBuilder<bool>(
+                                future: isPDFDownloaded(
+                                    dataList[index].id.toString()),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    print("inside snapshot");
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  }
 
-                                      //  bool isDownloaded = snapshot.data!;
-                                      return GestureDetector(
-                                          onTap: () async {
-                                            /*  if (isDownloaded) {
-                                          print("ontap isDownloaded");
-                                          final prefs = await SharedPreferences
-                                              .getInstance();
-                                          String filePath = prefs.getString(
-                                              dataList[index].id.toString())!;
-                                          //openPDF(filePath);
-                                          await OpenFilex.open(filePath);
-                                        } else {*/
-                                            /*  print("ontap");
-                                        pdf_id = dataList[index].id.toString();
-                                        String pdfurl = Constant.url_pdf_path +
-                                            dataList[index].pDFPath;
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PDFViewerFromUrl(
-                                                      pdfUrl: pdfurl,
-                                                    )));*/
-                                            // }
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                                left: 10.sp, right: 10.sp),
-                                            child: ClipRRect(
-                                              //  borderRadius: BorderRadius.circular(20.sp),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned.fill(
-                                                    child: SvgPicture.asset(
-                                                      "assets/pdf_field.svg",
-                                                      // fit: BoxFit.cover,
+                                  //  bool isDownloaded = snapshot.data!;
+                                  return GestureDetector(
+                                      onTap: () async {},
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: 10.sp, right: 10.sp),
+                                        child: ClipRRect(
+                                          //  borderRadius: BorderRadius.circular(20.sp),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: SvgPicture.asset(
+                                                  "assets/pdf_field.svg",
+                                                  // fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                              ListTile(
+                                                contentPadding: EdgeInsets.only(
+                                                    left: 15.sp,
+                                                    right: 15.sp,
+                                                    bottom: 5.sp,
+                                                    top: 5.sp),
+                                                title: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                        child: Text(
+                                                      dataList[index].pDFName ??
+                                                          'No Name',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .black, // Replace with your desired color
+                                                      ),
+                                                    )),
+                                                    GestureDetector(
+                                                      child: Container(
+                                                          margin:
+                                                              EdgeInsets.all(
+                                                                  5.sp),
+                                                          child: Text(
+                                                            "show",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .blue),
+                                                          )),
+                                                      onTap: () {
+                                                        pdf_id = dataList[index]
+                                                            .id
+                                                            .toString();
+                                                        String pdfurl = Constant
+                                                                .url_pdf_path +
+                                                            dataList[index]
+                                                                .pDFPath;
+                                                        Navigator.of(context).push(
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        PDFViewerFromUrl(
+                                                                          pdfUrl:
+                                                                              pdfurl,
+                                                                        )));
+                                                      },
                                                     ),
-                                                  ),
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.only(
-                                                            left: 15.sp,
-                                                            right: 15.sp,
-                                                            bottom: 5.sp,
-                                                            top: 5.sp),
-                                                    title: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Expanded(
-                                                            child: Text(
-                                                          dataList[index]
-                                                                  .pDFName ??
-                                                              'No Name',
-                                                          maxLines: 2,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                            color: Colors
-                                                                .black, // Replace with your desired color
-                                                          ),
-                                                        )),
-                                                        GestureDetector(
-                                                          child: Container(
-                                                              margin: EdgeInsets
-                                                                  .all(5.sp),
-                                                              child: Text(
-                                                                "show",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .blue),
-                                                              )),
-                                                          onTap: () {
-                                                            pdf_id =
-                                                                dataList[index]
-                                                                    .id
-                                                                    .toString();
-                                                            String pdfurl = Constant
-                                                                    .url_pdf_path +
-                                                                dataList[index]
-                                                                    .pDFPath;
-                                                            Navigator.of(context).push(
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            PDFViewerFromUrl(
-                                                                              pdfUrl: pdfurl,
-                                                                            )));
-                                                          },
-                                                        ),
-                                                        Container(
-                                                            margin:
-                                                                EdgeInsets.all(
-                                                                    5.sp),
-                                                            child: IconButton(
-                                                                icon: Icon(
-                                                                    Icons.share,
-                                                                    size: 18.sp,
-                                                                    color: Colors
-                                                                        .blue),
-                                                                onPressed:
-                                                                    () async {
-                                                                  if (downloadedPDFs
-                                                                      .containsKey(dataList[
-                                                                              index]
-                                                                          .id
-                                                                          .toString())) {
-                                                                    shareFile(downloadedPDFs[
-                                                                        dataList[index]
-                                                                            .id
-                                                                            .toString()]!);
-                                                                  } else {
-                                                                    pdf_id = dataList[
+                                                    Container(
+                                                        margin: EdgeInsets.all(
+                                                            5.sp),
+                                                        child: IconButton(
+                                                            icon: Icon(
+                                                                Icons.share,
+                                                                size: 18.sp,
+                                                                color: Colors
+                                                                    .blue),
+                                                            onPressed:
+                                                                () async {
+                                                              if (downloadedPDFs
+                                                                  .containsKey(dataList[
+                                                                          index]
+                                                                      .id
+                                                                      .toString())) {
+                                                                shareFile(downloadedPDFs[
+                                                                    dataList[
                                                                             index]
                                                                         .id
-                                                                        .toString();
-                                                                    await downloadPDF(Constant
-                                                                            .url_pdf_path +
-                                                                        dataList[index]
-                                                                            .pDFPath);
-                                                                    shareFile(downloadedPDFs[
-                                                                        dataList[index]
-                                                                            .id
-                                                                            .toString()]!);
-                                                                  }
-                                                                })),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
+                                                                        .toString()]!);
+                                                              } else {
+                                                                pdf_id = dataList[
+                                                                        index]
+                                                                    .id
+                                                                    .toString();
+                                                                await downloadPDF(Constant
+                                                                        .url_pdf_path +
+                                                                    dataList[
+                                                                            index]
+                                                                        .pDFPath);
+                                                                shareFile(downloadedPDFs[
+                                                                    dataList[
+                                                                            index]
+                                                                        .id
+                                                                        .toString()]!);
+                                                              }
+                                                            })),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ));
-                                    });
-                              },
-                            );
-                          } else {
-                            return Center(
-                              child: Text(
-                                "No data available",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            );
-                          }
-                        },
-                      )),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        })));
+                                            ],
+                                          ),
+                                        ),
+                                      ));
+                                });
+                          },
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            "No data available",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        );
+                      }
+                    },
+                  )),
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 
   /* void openPDF(String filePath) {

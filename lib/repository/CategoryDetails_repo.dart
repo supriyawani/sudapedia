@@ -93,11 +93,16 @@ class CategoryDetails_repo {
     var jsonData = json.decode(res);
     var data = "";
     print(json.decode(res));
-    if (jsonData != null) {
+    /* if (jsonData != null && jsonData['msg'] == "Inavlid User Token Key") {
+      throw Exception('Invalid User Token Key');
+    } else*/
+    if (jsonData.toString().contains("Successfull !!")) {
       data = jsonData['CategoryName'];
       print("data:" + data);
+      return data;
+    } else {
+      throw Exception('Invalid User Token Key');
     }
-    return data;
   }
 
   Future<List<SubcategoriesArr?>> getSubCategory(
@@ -122,7 +127,9 @@ class CategoryDetails_repo {
     print("res:" + res);
     List<SubcategoriesArr?> result;
 
-    if (jsonData is Map<String, dynamic>) {
+    if (jsonData != null && jsonData['msg'] == "Inavlid User Token Key") {
+      throw Exception('Invalid User Token Key');
+    } else if (jsonData is Map<String, dynamic>) {
       // If the response is a map and contains a key 'data'
       if (jsonData.containsKey('Subcategories_arr')) {
         final List t = jsonData['Subcategories_arr'];

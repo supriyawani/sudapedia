@@ -22,7 +22,9 @@ class Category_repo {
     print(
         "jsonData: ${json.encode(jsonData)}"); // Properly stringify JSON for printing
 
-    if (jsonData != null && jsonData['categories_arr'] != null) {
+    if (jsonData != null && jsonData['msg'] == "Inavlid User Token Key") {
+      throw Exception('Invalid User Token Key');
+    } else if (jsonData != null && jsonData['categories_arr'] != null) {
       final List<dynamic> categoriesList = jsonData['categories_arr'];
       yield categoriesList
           .map((item) => CategoriesResponse.fromJson(item))

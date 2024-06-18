@@ -51,8 +51,9 @@ class Comparison_repo {
     print(json.decode(res));
     if (jsonData != null) {
       data = jsonData['CategoryName'];
-      print("data:" + data);
+      return data;
+    } else {
+      throw Exception('Invalid User Token Key');
     }
-    return data;
   }
 }

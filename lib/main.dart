@@ -5,7 +5,6 @@ import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Pigments.dart';
 import 'package:sudapedia/SendOTP.dart';
-import 'package:sudapedia/SessionTimeoutManager.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
           fontFamily: 'Montserrat'),
-      navigatorObservers: [SessionNavigatorObserver()],
+      //  navigatorObservers: [SessionNavigatorObserver()],
       home: const MyHomePage(
         title: 'Sudapedia',
       ),
@@ -55,14 +54,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState() {
     super.initState();
-/*    Timer(
+    /*  Timer(
         Duration(seconds: 3),
         () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SendOTP())));*/
-    Timer(Duration(seconds: 3), () => _checkSession());
+            context, MaterialPageRoute(builder: (context) => Pigments())));*/
+    //Timer(Duration(seconds: 3), () => _checkSession());
+    Timer(Duration(seconds: 3), () => _checkTokenAndRedirect(context));
   }
 
-  void _checkSession() async {
+  /*void _checkSession() async {
     //  bool isLoggedIn = await SessionManager.isUserLoggedIn();
     bool isLoggedIn = await DatabaseHelper().isUserLoggedIn();
     print("isLoggedIn:" + isLoggedIn.toString());
@@ -76,6 +76,28 @@ class _MyHomePageState extends State<MyHomePage> {
         context,
         // MaterialPageRoute(builder: (context) => SendOTP()),
         MaterialPageRoute(builder: (context) => SendOTP()),
+      );
+    }
+  }*/
+  void _checkTokenAndRedirect(BuildContext context) async {
+    DatabaseHelper dbHelper = DatabaseHelper();
+    String? token = await dbHelper.getToken1(context);
+
+    if (token == null) {
+      // Token is either expired or not present, the user is already redirected to SendOTP
+      print("Token is expired or not present.");
+      Navigator.pushReplacement(
+        context,
+        // MaterialPageRoute(builder: (context) => SendOTP()),
+        MaterialPageRoute(builder: (context) => SendOTP()),
+      );
+    } else {
+      // Token is valid, proceed with your logic
+      print("Token is valid: $token");
+      // Proceed to the desired screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Pigments()),
       );
     }
   }
