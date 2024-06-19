@@ -59,7 +59,7 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*  appBar: AppBar(
+      /* appBar: AppBar(
         title: Text('PDF Viewer'),
       ),*/
       body: isLoading
@@ -68,7 +68,7 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
               ? PDFView(
                   filePath: localPath,
                   enableSwipe: true,
-                  swipeHorizontal: true,
+                  swipeHorizontal: false,
                   autoSpacing: false,
                   pageFling: false,
                   onRender: (pages) {
