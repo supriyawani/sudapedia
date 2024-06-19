@@ -53,32 +53,11 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     super.dispose();
   }
 
-  /*@override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      checkTokenExpiration();
-    }
-  }
-
-  Future<void> checkTokenExpiration() async {
-    try {
-      final token = await DatabaseHelper().getToken1(context);
-
-      if (token == null) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => SendOTP()),
-        );
-      }
-    } catch (e) {
-      print("Error checking token expiration: $e");
-    }
-  }*/
-
   Future<void> getToken() async {
     // userToken = await DatabaseHelper().getToken();
     userToken = await DatabaseHelper().getToken1(context);
     // userToken = "953Qi5k8I3T0voK";
-    // print("Token:" + userToken!);
+    print("Token:" + userToken!);
     // _categoriesStream = categoryRepo.getCategoryStream(userToken.toString());
     setState(() {
       _categoriesStream = categoryRepo.getCategoryStream(userToken.toString());
@@ -169,7 +148,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                         children: [
                           IconButton(
                               icon: Icon(Icons.notifications,
-                                  size: 40.sp, color: Colors.orange),
+                                  size: 35.sp, color: Colors.orange),
                               onPressed: () {}),
                           if (showBadge && count > 0)
                             Positioned(

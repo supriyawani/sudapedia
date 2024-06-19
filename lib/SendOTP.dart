@@ -106,7 +106,7 @@ class _SendOTPState extends State<SendOTP> {
                     child: TextFormField(
                       controller: _employeeIDController,
                       keyboardType: TextInputType.number,
-                      maxLength: 10,
+                      maxLength: 12,
                       decoration: InputDecoration(
                         hintText: "EmployeeID",
                         contentPadding: const EdgeInsets.symmetric(

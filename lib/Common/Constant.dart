@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sudapedia/Pigments.dart';
+import 'package:sudapedia/SendOTP.dart';
 
 class Constant {
   static String url = "https://sudapedia.sudarshan.com/Admin/web-api/";
@@ -119,7 +119,7 @@ class Constant {
   static void navigatetoSendotp(BuildContext context) {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => Pigments()),
+      MaterialPageRoute(builder: (context) => SendOTP()),
       (route) => false,
     );
   }
@@ -131,7 +131,7 @@ class Utils {
       // Use Future.microtask to ensure the navigation is triggered
       Future.microtask(() => Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => Pigments()),
+            MaterialPageRoute(builder: (context) => SendOTP()),
           ));
     }
   }

@@ -264,7 +264,7 @@ class DatabaseHelper {
           DateTime.fromMillisecondsSinceEpoch(insertedAt);
       final DateTime currentTime = DateTime.now();
 
-      // if (currentTime.difference(insertedTime).inHours >= 24) {
+      //if (currentTime.difference(insertedTime).inMinutes >= 10) {
       if (currentTime.difference(insertedTime).inHours >= 24) {
         // Token is older than 24 hours, delete it and redirect to SendOTP
         await clearUserSession();

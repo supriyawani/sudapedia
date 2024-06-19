@@ -41,17 +41,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  /*@override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // _navigateToNextScreen();
-    */ /* Timer(
-        Duration(seconds: 3),
-        () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SendOTP())));*/ /*
-  }*/
-
   void initState() {
     super.initState();
     /*  Timer(
@@ -62,23 +51,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Timer(Duration(seconds: 3), () => _checkTokenAndRedirect(context));
   }
 
-  /*void _checkSession() async {
-    //  bool isLoggedIn = await SessionManager.isUserLoggedIn();
-    bool isLoggedIn = await DatabaseHelper().isUserLoggedIn();
-    print("isLoggedIn:" + isLoggedIn.toString());
-    if (isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Pigments()),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        // MaterialPageRoute(builder: (context) => SendOTP()),
-        MaterialPageRoute(builder: (context) => SendOTP()),
-      );
-    }
-  }*/
   void _checkTokenAndRedirect(BuildContext context) async {
     DatabaseHelper dbHelper = DatabaseHelper();
     String? token = await dbHelper.getToken1(context);
@@ -88,7 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
       print("Token is expired or not present.");
       Navigator.pushReplacement(
         context,
-        // MaterialPageRoute(builder: (context) => SendOTP()),
         MaterialPageRoute(builder: (context) => SendOTP()),
       );
     } else {

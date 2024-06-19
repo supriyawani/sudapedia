@@ -120,14 +120,30 @@ class _CategoryComparisonState extends State<CategoryComparison> {
 
               //BackgroundWithLogo(code: code),
               Column(children: [
-                Container(
-                  color: Constant.getColor(code),
-                  width: double.infinity,
-                  child: Image.asset(
-                    'assets/appbar_logo.png',
-                    fit: BoxFit.contain,
+                Stack(children: [
+                  Container(
+                    color: Constant.getColor(code),
+                    width: double.infinity,
+                    child: Image.asset(
+                      'assets/appbar_logo.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
+                  Positioned(
+                      top: 0, // Adjust top padding as needed
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                          margin: EdgeInsets.only(top: 38.sp, right: 10.sp),
+                          alignment: Alignment.topLeft,
+                          child: IconButton(
+                            icon: Icon(Icons.arrow_back,
+                                size: 20.sp, color: Colors.black),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ))),
+                ]),
                 Container(
                   padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
                   color: Constant.getColor(code),
@@ -142,6 +158,7 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                     ),
                   ),
                 ),
+
                 // CustomAppBar(categoryName: categoryName.toString(), code: code),
                 Expanded(
                   child: FutureBuilder<ComparisonResponse>(
@@ -395,6 +412,7 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                     },
                   ),
                 ),
+                // ])
               ])
             ],
           ),

@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }*/
 
   Future<void> getToken() async {
-    userToken = await DatabaseHelper().getToken();
+    userToken = await DatabaseHelper().getToken1(context);
     //userToken = "1E5O3tCJuz03bib";
     print("Token:" + userToken!);
     // _categoriesStream = categoryRepo.getCategoryStream(userToken.toString());
