@@ -158,7 +158,7 @@ class _LoginState extends State<Login> {
                           //  initialValue: _employeeID.toString(),
                           key: Key("_employeeID"),
                           keyboardType: TextInputType.number,
-                          maxLength: 10,
+                          maxLength: 12,
                           decoration: InputDecoration(
                             hintText: "EmployeeID",
                             contentPadding: const EdgeInsets.symmetric(

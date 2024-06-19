@@ -83,24 +83,29 @@ class _PigmentsState extends State<Pigments> {
                   ),
                 ),
                 Container(
-                    margin: EdgeInsets.all(50.sp),
+                    // margin: EdgeInsets.all(50.sp),
+                    margin: EdgeInsets.only(top: 50.sp, bottom: 50.sp),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          margin: EdgeInsets.only(top: 50.sp),
+                          margin: EdgeInsets.only(
+                              top: 50.sp, left: 80.sp, right: 80.sp),
+                          //   margin: EdgeInsets.symmetric(horizontal: 20.sp),
                           child: Image.asset(
                             "assets/Sudapedia_logo.png",
                           ),
                         ),
                         GestureDetector(
                           child: Container(
-                            padding: EdgeInsets.only(top: 80.sp),
+                            // padding: EdgeInsets.only(top: 80.sp),
+                            padding: EdgeInsets.only(top: 90.sp),
                             alignment: Alignment.center,
-                            // margin: EdgeInsets.only(left: 30.sp, right: 30.sp),
-                            margin: EdgeInsets.symmetric(horizontal: 5.sp),
-                            // margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                            margin: EdgeInsets.only(
+                                left: 20.sp, right: 20.sp, top: 20.sp),
+                            //    margin: EdgeInsets.symmetric(horizontal: 5.sp),
+                            //  margin: EdgeInsets.symmetric(horizontal: 20.sp),
                             child: SvgPicture.asset(
                               "assets/pigments.svg",
                               fit: BoxFit.fill,
@@ -118,7 +123,9 @@ class _PigmentsState extends State<Pigments> {
                         GestureDetector(
                           child: Container(
                             alignment: Alignment.topRight,
-                            margin: EdgeInsets.symmetric(horizontal: 5.sp),
+                            // margin: EdgeInsets.symmetric(horizontal: 5.sp),
+                            margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                            // margin: EdgeInsets.only(left: 20.sp, right: 20.sp),
                             child: SvgPicture.asset(
                               "assets/logout.svg",
                               fit: BoxFit.fill,
