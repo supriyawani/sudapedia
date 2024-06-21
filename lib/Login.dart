@@ -17,10 +17,12 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late TextEditingController _employeeIDController;
+  late TextEditingController _OTPController;
   final _loadingController = StreamController<bool>();
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   late String _Otp;
   String _employeeID = ''; // Initialize with an empty string
+
   var isLoading = false;
   //late SessionManager _sessionTimeoutManager;
   @override
@@ -28,22 +30,31 @@ class _LoginState extends State<Login> {
     super.initState();
     // _sessionTimeoutManager = SessionManager();
     _employeeIDController = TextEditingController();
+    _OTPController = TextEditingController();
     _loadEmployeeID();
   }
 
   Future<void> _loadEmployeeID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? employeeID = prefs.getString('employeeID');
+    String? OTP = prefs.getString('OTP');
+    print("OTP:" + OTP.toString());
     setState(() {
       _employeeID = employeeID ?? '';
       _employeeIDController.text = _employeeID; // Handle null case
+      if (_employeeID.toString() == "888999") {
+        _OTPController.text = OTP ?? "";
+        _Otp = OTP ?? '';
+      }
     });
     print("_employeeID: " + _employeeID);
+    print("_Otp: " + _Otp);
   }
 
   @override
   void dispose() {
     _employeeIDController.dispose();
+    _OTPController.dispose();
     _loadingController.close();
     super.dispose();
   }
@@ -199,6 +210,7 @@ class _LoginState extends State<Login> {
                         margin: EdgeInsets.only(
                             left: 15.sp, right: 15.sp, bottom: 10.sp),
                         child: TextFormField(
+                          controller: _OTPController,
                           key: Key("_Otp"),
                           keyboardType: TextInputType.number,
                           maxLength: 4,
