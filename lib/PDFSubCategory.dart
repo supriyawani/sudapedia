@@ -12,7 +12,6 @@ import 'package:sudapedia/Common/BackgroundWithLogo.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/PDFViewerFromUrl.dart';
-import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/repository/PDFSubCategory_repo.dart';
 import 'package:sudapedia/repository/Stats_repo.dart';
 
@@ -166,18 +165,19 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return /*GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
         child: WillPopScope(onWillPop: () async {
           SessionTimeoutManager.resetLogoutTimer(context);
           return true;
-        }, child: Sizer(builder: (context, orientation, deviceType) {
-          return Scaffold(
-            key: _scaffoldKey,
-            body: Stack(
-              children: <Widget>[
-                /*   Container(
+        }, child: */
+        Sizer(builder: (context, orientation, deviceType) {
+      return Scaffold(
+        key: _scaffoldKey,
+        body: Stack(
+          children: <Widget>[
+            /*   Container(
                   padding: EdgeInsets.all(0),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -189,11 +189,11 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
                     ),
                   ),
                 ),*/
-                BackgroundWithLogo(code: code),
-                Container(
-                  child: Column(
-                    children: [
-                      /*  Container(
+            BackgroundWithLogo(code: code),
+            Container(
+              child: Column(
+                children: [
+                  /*  Container(
                         color: Constant.getColor(code.toString()),
                         width: double.infinity, // Span the full width
                         child: Image.asset(
@@ -216,108 +216,81 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
                           ),
                         ),
                       ),*/
-                      CustomAppBar(categoryName: categoryName, code: code),
-                      Expanded(
-                          child: StreamBuilder(
-                        stream: _postsController!.stream,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<dynamic> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            print("Error: ${snapshot.error}");
-                            return Center(
-                              child: Text(
-                                "Error fetching data",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                          } else if (snapshot.hasData &&
-                              snapshot.data != null) {
-                            print("Data: ${snapshot.data}");
-                            List<dynamic> dataList = snapshot.data;
-                            return ListView.builder(
-                              //physics: NeverScrollableScrollPhysics(),
-                              physics: ScrollPhysics(),
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              itemCount: dataList.length,
-                              itemBuilder: (context, index) {
-                                return FutureBuilder<bool>(
-                                    future: isPDFDownloaded(
-                                        dataList[index].id.toString()),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return Center(
-                                            child: CircularProgressIndicator());
-                                      }
+                  CustomAppBar(categoryName: categoryName, code: code),
+                  Expanded(
+                      child: StreamBuilder(
+                    stream: _postsController!.stream,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        print("Error: ${snapshot.error}");
+                        return Center(
+                          child: Text(
+                            "Error fetching data",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      } else if (snapshot.hasData && snapshot.data != null) {
+                        print("Data: ${snapshot.data}");
+                        List<dynamic> dataList = snapshot.data;
+                        return ListView.builder(
+                          //physics: NeverScrollableScrollPhysics(),
+                          physics: ScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: dataList.length,
+                          itemBuilder: (context, index) {
+                            return FutureBuilder<bool>(
+                                future: isPDFDownloaded(
+                                    dataList[index].id.toString()),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  }
 
-                                      //  bool isDownloaded = snapshot.data!;
-                                      return GestureDetector(
-                                          onTap: () async {
-                                            /*  if (isDownloaded) {
-                                          print("ontap isDownloaded");
-                                          final prefs = await SharedPreferences
-                                              .getInstance();
-                                          String filePath = prefs.getString(
-                                              dataList[index].id.toString())!;
-                                          //openPDF(filePath);
-                                          await OpenFilex.open(filePath);
-                                        } else {*/
-                                            /*  print("ontap");
-                                        pdf_id = dataList[index].id.toString();
-                                        String pdfurl = Constant.url_pdf_path +
-                                            dataList[index].pDFPath;
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PDFViewerFromUrl(
-                                                      pdfUrl: pdfurl,
-                                                    )));*/
-                                            // }
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                                left: 10.sp, right: 10.sp),
-                                            child: ClipRRect(
-                                              //  borderRadius: BorderRadius.circular(20.sp),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned.fill(
-                                                    child: SvgPicture.asset(
-                                                      "assets/pdf_field.svg",
-                                                      // fit: BoxFit.cover,
-                                                    ),
+                                  //  bool isDownloaded = snapshot.data!;
+                                  return Container(
+                                    margin: EdgeInsets.only(
+                                        left: 10.sp, right: 10.sp),
+                                    child: ClipRRect(
+                                      //  borderRadius: BorderRadius.circular(20.sp),
+                                      child: Stack(
+                                        children: [
+                                          Positioned.fill(
+                                            child: SvgPicture.asset(
+                                              "assets/pdf_field.svg",
+                                              // fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          ListTile(
+                                            contentPadding: EdgeInsets.only(
+                                                left: 15.sp,
+                                                right: 15.sp,
+                                                bottom: 5.sp,
+                                                top: 5.sp),
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                    child: Text(
+                                                  dataList[index].pDFName ??
+                                                      'No Name',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    color: Colors
+                                                        .black, // Replace with your desired color
                                                   ),
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.only(
-                                                            left: 15.sp,
-                                                            right: 15.sp,
-                                                            bottom: 5.sp,
-                                                            top: 5.sp),
-                                                    title: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Expanded(
-                                                            child: Text(
-                                                          dataList[index]
-                                                                  .pDFName ??
-                                                              'No Name',
-                                                          maxLines: 2,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                            color: Colors
-                                                                .black, // Replace with your desired color
-                                                          ),
-                                                        )),
-                                                        /*  Container(
+                                                )),
+                                                /*  Container(
                                                         child: IconButton(
                                                       icon: Icon(
                                                           Icons
@@ -334,91 +307,84 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
                                                                 .pDFPath);
                                                       },
                                                     )),*/
-                                                        GestureDetector(
-                                                          child: Container(
-                                                              margin: EdgeInsets
-                                                                  .all(5.sp),
-                                                              child: Text(
-                                                                "show",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .blue),
-                                                              )),
-                                                          onTap: () {
+                                                GestureDetector(
+                                                  child: Container(
+                                                      margin:
+                                                          EdgeInsets.all(5.sp),
+                                                      child: Text(
+                                                        "show",
+                                                        style: TextStyle(
+                                                            color: Colors.blue),
+                                                      )),
+                                                  onTap: () {
+                                                    pdf_id = dataList[index]
+                                                        .id
+                                                        .toString();
+                                                    String pdfurl = Constant
+                                                            .url_pdf_path +
+                                                        dataList[index].pDFPath;
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PDFViewerFromUrl(
+                                                                  pdfUrl:
+                                                                      pdfurl,
+                                                                )));
+                                                  },
+                                                ),
+                                                Container(
+                                                    margin:
+                                                        EdgeInsets.all(5.sp),
+                                                    child: IconButton(
+                                                        icon: Icon(Icons.share,
+                                                            size: 18.sp,
+                                                            color: Colors.blue),
+                                                        onPressed: () async {
+                                                          if (downloadedPDFs
+                                                              .containsKey(dataList[
+                                                                      index]
+                                                                  .id
+                                                                  .toString())) {
+                                                            shareFile(downloadedPDFs[
+                                                                dataList[index]
+                                                                    .id
+                                                                    .toString()]!);
+                                                          } else {
                                                             pdf_id =
                                                                 dataList[index]
                                                                     .id
                                                                     .toString();
-                                                            String pdfurl = Constant
+                                                            await downloadPDF(Constant
                                                                     .url_pdf_path +
                                                                 dataList[index]
-                                                                    .pDFPath;
-                                                            Navigator.of(context).push(
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            PDFViewerFromUrl(
-                                                                              pdfUrl: pdfurl,
-                                                                            )));
-                                                          },
-                                                        ),
-                                                        Container(
-                                                            margin:
-                                                                EdgeInsets.all(
-                                                                    5.sp),
-                                                            child: IconButton(
-                                                                icon: Icon(
-                                                                    Icons.share,
-                                                                    size: 18.sp,
-                                                                    color: Colors
-                                                                        .blue),
-                                                                onPressed:
-                                                                    () async {
-                                                                  if (downloadedPDFs
-                                                                      .containsKey(dataList[
-                                                                              index]
-                                                                          .id
-                                                                          .toString())) {
-                                                                    shareFile(downloadedPDFs[
-                                                                        dataList[index]
-                                                                            .id
-                                                                            .toString()]!);
-                                                                  } else {
-                                                                    pdf_id = dataList[
-                                                                            index]
-                                                                        .id
-                                                                        .toString();
-                                                                    await downloadPDF(Constant
-                                                                            .url_pdf_path +
-                                                                        dataList[index]
-                                                                            .pDFPath);
-                                                                    shareFile(downloadedPDFs[
-                                                                        dataList[index]
-                                                                            .id
-                                                                            .toString()]!);
-                                                                  }
-                                                                })),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                                    .pDFPath);
+                                                            shareFile(downloadedPDFs[
+                                                                dataList[index]
+                                                                    .id
+                                                                    .toString()]!);
+                                                          }
+                                                        })),
+                                              ],
                                             ),
-                                          ));
-                                    });
-                              },
-                            );
-                          } else {
-                            return Center(
-                              child: Text(
-                                "No data available",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            );
-                          }
-                        },
-                      )),
-                      /*Expanded(
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                });
+                          },
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            "No data available",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        );
+                      }
+                    },
+                  )),
+                  /*Expanded(
                       child: StreamBuilder(
                     stream: _postsController!.stream,
                     builder: (BuildContext context,
@@ -516,13 +482,13 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
                       }
                     },
                   )),*/
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        })));
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 
   /*Color getColor(String code) {

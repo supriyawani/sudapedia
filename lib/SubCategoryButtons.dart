@@ -7,7 +7,6 @@ import 'package:sudapedia/Common/BackgroundWithLogo.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Model/SubCategoryButtonResponse.dart';
-import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/SubCategoryButtonDetails.dart';
 import 'package:sudapedia/repository/SubCategoryButton_repo.dart';
 
@@ -129,18 +128,19 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
   final String bgcolor = "R254/G204/B0";
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return /*GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
         child: WillPopScope(onWillPop: () async {
           SessionTimeoutManager.resetLogoutTimer(context);
           return true;
-        }, child: Sizer(builder: (context, orientation, deviceType) {
-          return Scaffold(
-            key: _scaffoldKey,
-            body: Stack(
-              children: <Widget>[
-                /* Container(
+        }, child:*/
+        Sizer(builder: (context, orientation, deviceType) {
+      return Scaffold(
+        key: _scaffoldKey,
+        body: Stack(
+          children: <Widget>[
+            /* Container(
                   padding: EdgeInsets.all(0),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -152,11 +152,11 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                     ),
                   ),
                 ),*/
-                BackgroundWithLogo(code: code),
-                Container(
-                  child: Column(
-                    children: [
-                      /*   Container(
+            BackgroundWithLogo(code: code),
+            Container(
+              child: Column(
+                children: [
+                  /*   Container(
                         color: Constant.getColor(code.toString()),
                         width: double.infinity, // Span the full width
                         child: Image.asset(
@@ -179,69 +179,67 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                           ),
                         ),
                       ),*/
-                      CustomAppBar(categoryName: categoryName, code: code),
-                      Expanded(
-                          child: StreamBuilder(
-                        stream: _postsController!.stream,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<dynamic> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            print("Error: ${snapshot.error}");
-                            return Center(
-                              child: Text(
-                                "Error fetching data",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                          } else if (snapshot.hasData &&
-                              snapshot.data != null) {
-                            print("Data: ${snapshot.data}");
-                            List<dynamic> dataList = snapshot.data;
-                            return GridView.builder(
-                              padding: EdgeInsets.all(15.0),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 10.0,
-                                mainAxisSpacing: 10.0,
-                                childAspectRatio: 3 / 2,
-                              ),
-                              itemCount: dataList.length,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  child: Card(
-                                      child: Container(
-                                    //color: parseColor(dataList[index].code),
-                                    decoration: BoxDecoration(
-                                      color: parseColor1(dataList[index].code),
-                                      // color: parseColor1(bgcolor),
-                                      border: Border.all(
-                                          color: Colors.white, width: 3.0),
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          //   color: Color(0xFF18174E)
-                                          color: Colors.white38.withOpacity(
-                                              0.25), // Opacity adjusted based on Figma value
-                                          offset: Offset(0, -3),
-                                          blurRadius: 4,
-                                          spreadRadius: 0,
-                                        ),
-                                        BoxShadow(
-                                          color: Color(0xFF221750).withOpacity(
-                                              0.18), // Opacity adjusted based on Figma value
-                                          offset: Offset(0, 2),
-                                          blurRadius: 6,
-                                          spreadRadius: 0,
-                                        ),
-                                      ],
+                  CustomAppBar(categoryName: categoryName, code: code),
+                  Expanded(
+                      child: StreamBuilder(
+                    stream: _postsController!.stream,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        print("Error: ${snapshot.error}");
+                        return Center(
+                          child: Text(
+                            "Error fetching data",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      } else if (snapshot.hasData && snapshot.data != null) {
+                        print("Data: ${snapshot.data}");
+                        List<dynamic> dataList = snapshot.data;
+                        return GridView.builder(
+                          padding: EdgeInsets.all(15.0),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10.0,
+                            mainAxisSpacing: 10.0,
+                            childAspectRatio: 3 / 2,
+                          ),
+                          itemCount: dataList.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              child: Card(
+                                  child: Container(
+                                //color: parseColor(dataList[index].code),
+                                decoration: BoxDecoration(
+                                  color: parseColor1(dataList[index].code),
+                                  // color: parseColor1(bgcolor),
+                                  border: Border.all(
+                                      color: Colors.white, width: 3.0),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      //   color: Color(0xFF18174E)
+                                      color: Colors.white38.withOpacity(
+                                          0.25), // Opacity adjusted based on Figma value
+                                      offset: Offset(0, -3),
+                                      blurRadius: 4,
+                                      spreadRadius: 0,
                                     ),
-                                    /* child: InnerShadow(
+                                    BoxShadow(
+                                      color: Color(0xFF221750).withOpacity(
+                                          0.18), // Opacity adjusted based on Figma value
+                                      offset: Offset(0, 2),
+                                      blurRadius: 6,
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                ),
+                                /* child: InnerShadow(
                                         shadows: [
                                           Shadow(
                                             color: Color(0xFF18174E)
@@ -252,9 +250,9 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                                             blurRadius: 4,
                                           ),
                                         ],*/
-                                    child: Center(
-                                        child: Text(
-                                            dataList[index].title ?? 'No Name',
+                                child: Center(
+                                    child:
+                                        Text(dataList[index].title ?? 'No Name',
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
@@ -266,43 +264,42 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                                               /*dataList[index].textcolor.toString()*/
                                               // Replace with your desired color
                                             ))),
-                                  )),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            SubCategoryButtonDetails(
-                                          categoryName:
-                                              subcategoryName.toString(),
-                                          id: id,
-                                          code: code.toString(),
-                                          subcat_id: subcat_id.toString(),
-                                          color_id: dataList[index].id,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                              )),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        SubCategoryButtonDetails(
+                                      categoryName: subcategoryName.toString(),
+                                      id: id,
+                                      code: code.toString(),
+                                      subcat_id: subcat_id.toString(),
+                                      color_id: dataList[index].id,
+                                    ),
+                                  ),
                                 );
                               },
                             );
-                          } else {
-                            return Center(
-                              child: Text(
-                                "No data available",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            );
-                          }
-                        },
-                      )),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        })));
+                          },
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            "No data available",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        );
+                      }
+                    },
+                  )),
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 
   Color txtcolor(String txtcolor) {

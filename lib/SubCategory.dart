@@ -8,7 +8,6 @@ import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Common/BackgroundWithLogo.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
-import 'package:sudapedia/SessionTimeoutManager.dart';
 import 'package:sudapedia/SubCategoryButtons.dart';
 import 'package:sudapedia/repository/CategoryDetails_repo.dart';
 
@@ -115,18 +114,19 @@ class _SubCategoryState extends State<SubCategory> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return /* GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
         child: WillPopScope(onWillPop: () async {
           SessionTimeoutManager.resetLogoutTimer(context);
           return true;
-        }, child: Sizer(builder: (context, orientation, deviceType) {
-          return Scaffold(
-            key: _scaffoldKey,
-            body: Stack(
-              children: <Widget>[
-                /*  Container(
+        }, child: */
+        Sizer(builder: (context, orientation, deviceType) {
+      return Scaffold(
+        key: _scaffoldKey,
+        body: Stack(
+          children: <Widget>[
+            /*  Container(
                   padding: EdgeInsets.all(0),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -138,13 +138,13 @@ class _SubCategoryState extends State<SubCategory> {
                     ),
                   ),
                 ),*/
-                BackgroundWithLogo(
-                  code: code.toString(),
-                ),
-                Container(
-                  child: Column(
-                    children: [
-                      /* Container(
+            BackgroundWithLogo(
+              code: code.toString(),
+            ),
+            Container(
+              child: Column(
+                children: [
+                  /* Container(
                         color: Constant.getColor(code.toString()),
                         width: double.infinity, // Span the full width
                         child: Image.asset(
@@ -167,60 +167,58 @@ class _SubCategoryState extends State<SubCategory> {
                           ),
                         ),
                       ),*/
-                      CustomAppBar(
-                          categoryName: categoryName.toString(), code: code),
-                      Expanded(
-                          child: StreamBuilder(
-                        stream: _postsController!.stream,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<dynamic> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            print("Error: ${snapshot.error}");
-                            return Center(
-                              child: Text(
-                                "Error fetching data",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                          } else if (snapshot.hasData &&
-                              snapshot.data != null) {
-                            print("Data: ${snapshot.data}");
-                            List<dynamic> dataList = snapshot.data;
-                            return Container(
-                                //  margin: EdgeInsets.only(top: 50.sp),
-                                margin: EdgeInsets.only(top: 10.sp),
-                                // alignment: Alignment.topCenter,
-                                child: ListView.builder(
-                                    //physics: NeverScrollableScrollPhysics(),
-                                    physics: ScrollPhysics(),
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.zero,
-                                    itemCount: dataList.length,
-                                    itemBuilder: (context, index) {
-                                      return GestureDetector(
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                              left: 10.sp,
-                                              right: 10.sp,
-                                              top: 15.sp),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15.sp),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Color(0xFF221750)
-                                                    .withOpacity(0.10),
-                                                // Opacity adjusted based on Figma value
-                                                offset: Offset(0, 3),
-                                                blurRadius: 6,
-                                                spreadRadius: 0,
-                                              ),
-                                              /*  BoxShadow(
+                  CustomAppBar(
+                      categoryName: categoryName.toString(), code: code),
+                  Expanded(
+                      child: StreamBuilder(
+                    stream: _postsController!.stream,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        print("Error: ${snapshot.error}");
+                        return Center(
+                          child: Text(
+                            "Error fetching data",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      } else if (snapshot.hasData && snapshot.data != null) {
+                        print("Data: ${snapshot.data}");
+                        List<dynamic> dataList = snapshot.data;
+                        return Container(
+                            //  margin: EdgeInsets.only(top: 50.sp),
+                            margin: EdgeInsets.only(top: 10.sp),
+                            // alignment: Alignment.topCenter,
+                            child: ListView.builder(
+                                //physics: NeverScrollableScrollPhysics(),
+                                physics: ScrollPhysics(),
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                itemCount: dataList.length,
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          left: 10.sp,
+                                          right: 10.sp,
+                                          top: 15.sp),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(15.sp),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color(0xFF221750)
+                                                .withOpacity(0.10),
+                                            // Opacity adjusted based on Figma value
+                                            offset: Offset(0, 3),
+                                            blurRadius: 6,
+                                            spreadRadius: 0,
+                                          ),
+                                          /*  BoxShadow(
                                                 color: Color(0xFF18174E)
                                                     .withOpacity(
                                                         0.25), // Opacity adjusted based on Figma value
@@ -228,87 +226,85 @@ class _SubCategoryState extends State<SubCategory> {
                                                 blurRadius: 4,
                                                 spreadRadius: 0,
                                               ),*/
-                                            ],
-                                          ),
-                                          child: InnerShadow(
-                                              shadows: [
-                                                Shadow(
-                                                  color: Color(0xFF18174E)
-                                                      .withOpacity(0.25),
-                                                  // Inner shadow
-                                                  offset: Offset(0, 2),
-                                                  // Adjust offset as needed
-                                                  blurRadius: 4,
-                                                ),
-                                              ],
-                                              child: Stack(
-                                                children: [
-                                                  Positioned.fill(
-                                                    child: SvgPicture.asset(
-                                                      "assets/subcategory_application.svg",
-                                                      fit: BoxFit.fill,
-                                                    ),
-                                                  ),
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.only(
-                                                            left: 5.sp,
-                                                            right: 5.sp,
-                                                            bottom: 10.sp,
-                                                            top: 10.sp),
-                                                    title: Center(
-                                                        child: Text(
-                                                      dataList[index]
-                                                              .subCategoryName ??
-                                                          'No Name',
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        // fontSize: 15.sp,
-                                                        fontSize: 13.sp,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        // Replace with your desired color
-                                                      ),
-                                                    )),
-                                                  ),
-                                                ],
-                                              )),
-                                        ),
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SubCategoryButtons(
-                                                categoryName:
-                                                    categoryName.toString(),
-                                                id: id,
-                                                code: code.toString(),
-                                                subcat_id: dataList[index].id,
-                                              ),
+                                        ],
+                                      ),
+                                      child: InnerShadow(
+                                          shadows: [
+                                            Shadow(
+                                              color: Color(0xFF18174E)
+                                                  .withOpacity(0.25),
+                                              // Inner shadow
+                                              offset: Offset(0, 2),
+                                              // Adjust offset as needed
+                                              blurRadius: 4,
                                             ),
-                                          );
-                                        },
+                                          ],
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: SvgPicture.asset(
+                                                  "assets/subcategory_application.svg",
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
+                                              ListTile(
+                                                contentPadding: EdgeInsets.only(
+                                                    left: 5.sp,
+                                                    right: 5.sp,
+                                                    bottom: 10.sp,
+                                                    top: 10.sp),
+                                                title: Center(
+                                                    child: Text(
+                                                  dataList[index]
+                                                          .subCategoryName ??
+                                                      'No Name',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    // fontSize: 15.sp,
+                                                    fontSize: 13.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                    // Replace with your desired color
+                                                  ),
+                                                )),
+                                              ),
+                                            ],
+                                          )),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SubCategoryButtons(
+                                            categoryName:
+                                                categoryName.toString(),
+                                            id: id,
+                                            code: code.toString(),
+                                            subcat_id: dataList[index].id,
+                                          ),
+                                        ),
                                       );
-                                    }));
-                          } else {
-                            return Center(
-                              child: Text(
-                                "No data available",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            );
-                          }
-                        },
-                      )),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        })));
+                                    },
+                                  );
+                                }));
+                      } else {
+                        return Center(
+                          child: Text(
+                            "No data available",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        );
+                      }
+                    },
+                  )),
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 }

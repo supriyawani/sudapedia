@@ -290,36 +290,6 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                                                                       ),
                                                                     ),
                                                                   )),
-                                                                  /* IconButton(
-                                                                        icon:
-                                                                            Icon(
-                                                                          Icons
-                                                                              .download_for_offline_outlined,
-                                                                          size:
-                                                                              18.sp,
-                                                                          color:
-                                                                              Colors.blue,
-                                                                        ),
-                                                                        onPressed:
-                                                                            () async {
-                                                                          Navigator
-                                                                              .push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                              builder: (context) => PDFSubCategory(
-                                                                                id: id,
-                                                                                code: code.toString(),
-                                                                                subcat_id: subcategory.id.toString(),
-                                                                                color_id: colorCode.id,
-                                                                                categoryName: categoryName.toString(),
-                                                                                color_code_id: "0",
-                                                                              ),
-                                                                            ),
-                                                                          );
-
-                                                                          // Handle the download action
-                                                                        },
-                                                                      ),*/
                                                                 ]),
                                                           ),
                                                           onTap: () {
@@ -350,41 +320,7 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                                                           },
                                                         ),
                                                       ),
-                                                      /* onTap: () {
-                                                      */ /* Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PDFSubCategory(
-                                                            id: id,
-                                                            code:
-                                                                code.toString(),
-                                                            subcat_id:
-                                                                subcategory.id
-                                                                    .toString(),
-                                                            color_id:
-                                                                colorCode.id,
-                                                            categoryName:
-                                                                categoryName
-                                                                    .toString(),
-                                                            color_code_id: "0",
-                                                          ),
-                                                        ),
-                                                      );*/ /*
-                                                    },*/
                                                     ),
-                                                    /* if (i <
-                                                      subcategory.colorCodes
-                                                              .length -
-                                                          1)
-                                                    Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: 5.sp,
-                                                            right: 5.sp),
-                                                        child: Divider(
-                                                          color: Colors.black,
-                                                          thickness: 0.9,
-                                                        )),*/
                                                   ],
                                                 ),
                                               );

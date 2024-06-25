@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -80,3 +81,4 @@ class SessionNavigatorObserver extends NavigatorObserver {
     SessionTimeoutManager.startLogoutTimer(navigator!.context);
   }
 }
+*/

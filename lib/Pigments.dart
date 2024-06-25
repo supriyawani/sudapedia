@@ -8,7 +8,6 @@ import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/NewHomeScreen.dart';
 import 'package:sudapedia/SendOTP.dart';
-import 'package:sudapedia/SessionTimeoutManager.dart';
 
 class Pigments extends StatefulWidget {
   @override
@@ -58,100 +57,100 @@ class _PigmentsState extends State<Pigments> {
   @override
   Widget build(BuildContext context) {
     final _scaffoldKey = GlobalKey<ScaffoldState>();
-    return GestureDetector(
+    return /*GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
         child: WillPopScope(onWillPop: () async {
           SessionTimeoutManager.resetLogoutTimer(context);
           return true;
-        }, child: Sizer(builder: (context, orientation, deviceType) {
-          return Scaffold(
-              key: _scaffoldKey,
-              body: Stack(children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  //margin: EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "assets/background_image.png",
-                      ),
-                      fit: BoxFit.fill,
-                    ),
+        }, child: */
+        Sizer(builder: (context, orientation, deviceType) {
+      return Scaffold(
+          key: _scaffoldKey,
+          body: Stack(children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(0),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              //margin: EdgeInsets.only(top: 10),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    "assets/background_image.png",
                   ),
+                  fit: BoxFit.fill,
                 ),
-                Container(
-                    // margin: EdgeInsets.all(50.sp),
-                    margin: EdgeInsets.only(top: 50.sp, bottom: 50.sp),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(
-                              top: 50.sp, left: 80.sp, right: 80.sp),
-                          //   margin: EdgeInsets.symmetric(horizontal: 20.sp),
-                          child: Image.asset(
-                            "assets/Sudapedia_logo.png",
-                          ),
+              ),
+            ),
+            Container(
+                // margin: EdgeInsets.all(50.sp),
+                margin: EdgeInsets.only(top: 50.sp, bottom: 50.sp),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(
+                          top: 50.sp, left: 80.sp, right: 80.sp),
+                      //   margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                      child: Image.asset(
+                        "assets/Sudapedia_logo.png",
+                      ),
+                    ),
+                    GestureDetector(
+                      child: Container(
+                        // padding: EdgeInsets.only(top: 80.sp),
+                        padding: EdgeInsets.only(top: 90.sp),
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(
+                            left: 20.sp, right: 20.sp, top: 20.sp),
+                        //    margin: EdgeInsets.symmetric(horizontal: 5.sp),
+                        //  margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                        child: SvgPicture.asset(
+                          "assets/pigments.svg",
+                          fit: BoxFit.fill,
                         ),
-                        GestureDetector(
-                          child: Container(
-                            // padding: EdgeInsets.only(top: 80.sp),
-                            padding: EdgeInsets.only(top: 90.sp),
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(
-                                left: 20.sp, right: 20.sp, top: 20.sp),
-                            //    margin: EdgeInsets.symmetric(horizontal: 5.sp),
-                            //  margin: EdgeInsets.symmetric(horizontal: 20.sp),
-                            child: SvgPicture.asset(
-                              "assets/pigments.svg",
-                              fit: BoxFit.fill,
-                            ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NewHomeScreen(),
                           ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NewHomeScreen(),
-                              ),
-                            );
-                          },
+                        );
+                      },
+                    ),
+                    GestureDetector(
+                      child: Container(
+                        alignment: Alignment.topRight,
+                        // margin: EdgeInsets.symmetric(horizontal: 5.sp),
+                        margin: EdgeInsets.symmetric(horizontal: 20.sp),
+                        // margin: EdgeInsets.only(left: 20.sp, right: 20.sp),
+                        child: SvgPicture.asset(
+                          "assets/logout.svg",
+                          fit: BoxFit.fill,
                         ),
-                        GestureDetector(
-                          child: Container(
-                            alignment: Alignment.topRight,
-                            // margin: EdgeInsets.symmetric(horizontal: 5.sp),
-                            margin: EdgeInsets.symmetric(horizontal: 20.sp),
-                            // margin: EdgeInsets.only(left: 20.sp, right: 20.sp),
-                            child: SvgPicture.asset(
-                              "assets/logout.svg",
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          onTap: () async {
-                            getToken();
-                            print("userToken:" + userToken.toString());
-                            print("employeeID:" + employeeId.toString());
-                            _logout(employeeId.toString(), userToken!);
-                          },
-                        ),
-                        GestureDetector(
-                            child: Container(
-                          alignment: Alignment.bottomCenter,
-                          /*margin: EdgeInsets.symmetric(
+                      ),
+                      onTap: () async {
+                        getToken();
+                        print("userToken:" + userToken.toString());
+                        print("employeeID:" + employeeId.toString());
+                        _logout(employeeId.toString(), userToken!);
+                      },
+                    ),
+                    Container(
+                      alignment: Alignment.bottomCenter,
+                      /*margin: EdgeInsets.symmetric(
                             horizontal: 20.sp,
                           ),*/
-                          child: Image.asset(
-                            "assets/sudarshan.png",
-                          ),
-                        )),
-                      ],
-                    ))
-              ]));
-        })));
+                      child: Image.asset(
+                        "assets/sudarshan.png",
+                      ),
+                    ),
+                  ],
+                ))
+          ]));
+    });
   }
 
   Future<void> getToken() async {
