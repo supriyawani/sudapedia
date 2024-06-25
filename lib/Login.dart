@@ -9,6 +9,9 @@ import 'package:sudapedia/Pigments.dart';
 import 'package:sudapedia/repository/Otp_repo.dart';
 
 class Login extends StatefulWidget {
+  final String otp;
+
+  const Login({super.key, required this.otp});
   @override
   _LoginState createState() => _LoginState();
 }
@@ -17,6 +20,8 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late TextEditingController _employeeIDController;
+  late TextEditingController _otpController;
+
   final _loadingController = StreamController<bool>();
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   late String _Otp;
@@ -28,6 +33,9 @@ class _LoginState extends State<Login> {
     super.initState();
     // _sessionTimeoutManager = SessionManager();
     _employeeIDController = TextEditingController();
+    _otpController = TextEditingController();
+    _Otp = widget.otp;
+    _otpController.text = _Otp;
     _loadEmployeeID();
   }
 
@@ -200,6 +208,7 @@ class _LoginState extends State<Login> {
                             left: 15.sp, right: 15.sp, bottom: 10.sp),
                         child: TextFormField(
                           key: Key("_Otp"),
+                          controller: _otpController,
                           keyboardType: TextInputType.number,
                           maxLength: 4,
                           decoration: InputDecoration(

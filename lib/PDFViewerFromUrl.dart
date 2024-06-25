@@ -41,7 +41,7 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
       String fileName = widget.pdfUrl.split('/').last;
 
       // Define the full file path
-      String fullPath = '$appDocPath/$fileName';
+      String fullPath = '$appDocPath/$fileName'.replaceAll(" ", "");
 
       // Download the file
       await dio.download(widget.pdfUrl, fullPath);
@@ -61,11 +61,6 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD
-      /* appBar: AppBar(
-        title: Text('PDF Viewer'),
-      ),*/
-=======
       appBar: AppBar(
         title: const Text('PDF Viewer'),
         // actions: [
@@ -76,7 +71,6 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
         //       child: Text("Zomm"))
         // ],
       ),
->>>>>>> c777c68 (ios build done)
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : localPath != null
