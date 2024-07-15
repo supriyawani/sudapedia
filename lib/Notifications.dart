@@ -19,41 +19,33 @@ class _NotificationsState extends State<Notifications> {
   var isLoading = false;
   String? query;
   String? userToken; // Replace with actual user token
-  //StreamController? _postsController;
   StreamController<List<NotificationArr?>>? _postsController;
   final TextEditingController _searchController = TextEditingController();
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
+  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // _postsController = StreamController();
     _postsController = StreamController<List<NotificationArr?>>();
     getToken();
-    setState(() {});
   }
 
   Future<void> getToken() async {
     userToken = (await DatabaseHelper().getToken1(context))!;
-    //userToken = "953Qi5k8I3T0voK";
-    print("Token:" + userToken!);
+    print("Token: $userToken");
+
     setState(() {
       loadPosts();
     });
   }
 
-  // _CategoryDetailsState(this.id);
+  Future<void> storeNotifications(List<NotificationArr?> notifications) async {
+    final prefs = await _prefs;
+    prefs.setString(
+        'previousNotifications', NotificationArr.encode(notifications));
+  }
 
-  loadPosts(/*[String query = ""]*/) async {
-    /*var apiProvider = Notification_repo();
-    apiProvider
-        .getNotification(
-      userToken.toString(),
-    )
-        .then((res) async {
-      _postsController?.add(res);
-      return res;
-    });*/
+  loadPosts() async {
     var apiProvider = Notification_repo();
     try {
       var res = await apiProvider.getNotification(userToken.toString());
@@ -65,21 +57,20 @@ class _NotificationsState extends State<Notifications> {
     } catch (e) {
       print("Error loading posts: $e");
       Constant.navigatetoSendotp(context);
-      // Handle error loading posts
     }
   }
 
-  loadPostseasrch([String query = ""]) async {
+  loadPostSearch([String query = ""]) async {
     var apiProvider = Notification_repo();
-    apiProvider
-        .getseachNotification(
-      userToken.toString(),
-      query.toString(),
-    )
-        .then((res) async {
+    try {
+      var res = await apiProvider.getseachNotification(
+        userToken.toString(),
+        query.toString(),
+      );
       _postsController?.add(res);
-      return res;
-    });
+    } catch (e) {
+      print("Error searching posts: $e");
+    }
   }
 
   @override
@@ -90,47 +81,10 @@ class _NotificationsState extends State<Notifications> {
         key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
-            /* Container(
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  margin: EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/background_image.png"),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),*/
             BackgroundWithLogo(code: "A"),
             Container(
               child: Column(
                 children: [
-                  /*  Container(
-                        color: Constant.getColor("A"),
-                        width: double.infinity, // Span the full width
-                        child: Image.asset(
-                          'assets/appbar_logo.png',
-                          fit: BoxFit.contain, // Adjust fit as needed
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.only(
-                            top: 5.sp, bottom: 5.sp, left: 15.sp),
-                        color: Constant.getColor("A"),
-                        width: double.infinity,
-                        child: Center(
-                          child: Text(
-                            "Notification",
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              //fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),*/
                   CustomAppBar(categoryName: "Notifications", code: "A"),
                   Container(
                     padding: EdgeInsets.all(8.sp),
@@ -140,9 +94,8 @@ class _NotificationsState extends State<Notifications> {
                         hintText: "Search Notifications",
                       ),
                       onChanged: (value) {
-                        //   loadPostseasrch();
                         setState(() {
-                          loadPostseasrch(value);
+                          loadPostSearch(value);
                         });
                       },
                     ),
@@ -157,22 +110,11 @@ class _NotificationsState extends State<Notifications> {
                           return Center(
                             child: CircularProgressIndicator(),
                           );
-                        }
-                        /*else if (snapshot.hasError) {
-                              print("Error: ${snapshot.error}");
-                              return Center(
-                                child: Text(
-                                  "Error fetching data",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              );
-                            } */
-                        else if (snapshot.hasError) {
+                        } else if (snapshot.hasError) {
                           Utils.handleInvalidToken(context, snapshot.error);
                           return Center(
                               child: Text('Error: ${snapshot.error}'));
                         } else if (snapshot.hasData && snapshot.data != null) {
-                          print("Data: ${snapshot.data}");
                           List<NotificationArr?> dataList = snapshot.data!;
                           return ListView.builder(
                             physics: ScrollPhysics(),
@@ -182,12 +124,7 @@ class _NotificationsState extends State<Notifications> {
                             itemBuilder: (context, index) {
                               var notification = dataList[index];
                               return Container(
-                                margin: EdgeInsets.only(
-                                    left: 8.sp,
-                                    right: 8.sp,
-                                    top: 8.sp,
-                                    bottom: 8.sp),
-                                //margin: EdgeInsets.all(8.sp),
+                                margin: EdgeInsets.all(8.sp),
                                 child: Card(
                                   elevation: 5,
                                   color: Colors.white,
@@ -216,17 +153,6 @@ class _NotificationsState extends State<Notifications> {
                                               children: <Widget>[
                                                 Container(
                                                   margin: EdgeInsets.all(3.sp),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      // Add your UI components here
-                                                    ],
-                                                  ),
-                                                ),
-                                                Container(
-                                                  margin: EdgeInsets.all(2.sp),
                                                   child: Text(
                                                     notification
                                                             ?.nottifications ??

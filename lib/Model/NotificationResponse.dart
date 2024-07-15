@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class NotificationResponse {
   String? success;
   String? failure;
@@ -62,5 +64,17 @@ class NotificationArr {
     data['created_on_date'] = this.createdDate;
     data['created_on_time'] = this.createdTime;
     return data;
+  }
+
+  static String encode(List<NotificationArr?> notifications) {
+    return json.encode(
+      notifications.map((notification) => notification?.toJson()).toList(),
+    );
+  }
+
+  static List<NotificationArr?> decode(String notifications) {
+    return (json.decode(notifications) as List<dynamic>)
+        .map<NotificationArr?>((item) => NotificationArr.fromJson(item))
+        .toList();
   }
 }

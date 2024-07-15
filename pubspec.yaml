@@ -31,7 +31,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
-  pdfrx: ^1.0.69
+  #pdfrx: ^1.0.69
 
 dev_dependencies:
   dio: ^5.0.3
@@ -61,6 +61,8 @@ dev_dependencies:
   sizer: ^2.0.15
   sqflite: ^2.3.1
   url_launcher: ^6.1.14
+  provider: ^6.0.0
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.

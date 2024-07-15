@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/CategoryComparison.dart';
@@ -9,10 +11,12 @@ import 'package:sudapedia/CategoryDetails.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Model/CategoriesResponse.dart';
-import 'package:sudapedia/Notifications.dart';
+import 'package:sudapedia/Model/NotificationResponse.dart';
 import 'package:sudapedia/SubCategory.dart';
 import 'package:sudapedia/SubCategoryButtons.dart';
 import 'package:sudapedia/repository/Category_repo.dart';
+
+import 'Notifications.dart';
 
 class NewHomeScreen extends StatefulWidget {
   const NewHomeScreen({Key? key}) : super(key: key);
@@ -27,23 +31,79 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
   final categoryRepo = Category_repo();
   Stream<List<CategoriesResponse>> _categoriesStream = Stream.value([]);
   String? userToken, employeeId;
-  String? notificationCount;
+  //String? notificationCount;
+  int? notificationCount;
   bool showBadge = true;
   //late Future<void> _initTokenFuture;
   Timer? _logoutTimer;
-
+  int count = 0;
   @override
   void initState() {
     super.initState();
 
     // WidgetsBinding.instance.addObserver(this);
-    notificationCountforBadge();
+    // notificationCountforBadge();
     getToken();
+    fetchnotifiication();
   }
 
-  Future<void> notificationCountforBadge() async {
+  /*Future<void> notificationCountforBadge() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    notificationCount = prefs.getString('notificationcount');
+    // notificationCount = prefs.getString('notificationcount');
+    // notificationCount = "3";
+    count = (await DatabaseHelper().getNotificationCount())!;
+    notificationCount = count;
+    //notificationCount = DatabaseHelper().getNotificationCount().toString();
+    print("count:" + count.toString());
+    setState(() {
+      //notificationCount = prefs.getString('notificationcount');
+      // notificationCount = prefs.getString('notificationcount') ?? "";
+    });
+  }*/
+
+  Future<void> fetchnotifiication() async {
+    String? UserToken = await DatabaseHelper().getToken1(context);
+    var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+    var request = http.Request(
+        'POST', Uri.parse(Constant.url + Constant.url_notification));
+
+    request.bodyFields = {
+      'apiKey': "8c961641025d48b7b89d475054d656da",
+      'UserToken': UserToken.toString(),
+    };
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    var res = await response.stream.bytesToString();
+    var jsonData = json.decode(res);
+
+    List<NotificationArr?> result;
+    if (jsonData != null && jsonData['msg'] == "Inavlid User Token Key") {
+      throw Exception('Invalid User Token Key');
+    } else if (jsonData.toString().contains("Successfull !!")) {
+      // If the response is a map and contains a key 'data'
+      if (jsonData.containsKey('notifications_arr')) {
+        final dynamic pdfData = jsonData['notifications_arr'];
+        final List t = jsonData['notifications_arr'];
+        final List<NotificationArr> userList =
+            t.map((item) => NotificationArr.fromJson(item)).toList();
+        result = userList.toSet().toList();
+        print("Notificationcount:" + userList.length.toString());
+        count = (await DatabaseHelper().getNotificationCount())!;
+        //count = 1565;
+        int Updatedcount = int.parse(userList.length.toString());
+        //int Updatedcount = 1566;
+
+        //notificationCount = Updatedcount - count;
+        setState(() {
+          notificationCount = Updatedcount - count;
+        });
+
+        print("Count:" + notificationCount.toString());
+      } else {
+        result = List.empty();
+      }
+    }
   }
 
   @override
@@ -55,7 +115,9 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
 
   Future<void> getToken() async {
     // userToken = await DatabaseHelper().getToken();
+
     userToken = await DatabaseHelper().getToken1(context);
+
     // userToken = "953Qi5k8I3T0voK";
     print("Token:" + userToken!);
     // _categoriesStream = categoryRepo.getCategoryStream(userToken.toString());
@@ -64,9 +126,27 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     });
   }
 
+  Future<void> resetNotificationCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('notificationcount', "0");
+    await DatabaseHelper().updateNotificationCount(0);
+    setState(() {
+      notificationCount = 0;
+      count = 0;
+      showBadge = false;
+    });
+  }
+  /*Future<void> resetNotificationCount(NotificationProvider provider) async {
+    provider.setNotificationCount(0);
+  }*/
+
   @override
   Widget build(BuildContext context) {
-    int count = int.tryParse(notificationCount!) ?? 0;
+    //count = int.tryParse(notificationCount!) ?? 0;
+    // count = int.tryParse(notificationCount!)!;
+
+    count = notificationCount ?? 0;
+    print("count:" + count.toString());
     return /*GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
@@ -149,7 +229,19 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                           IconButton(
                               icon: Icon(Icons.notifications,
                                   size: 35.sp, color: Colors.orange),
-                              onPressed: () {}),
+                              onPressed: () async {
+                                resetNotificationCount();
+                                setState(() {
+                                  showBadge = false; // Hide badge on icon click
+                                });
+                                //  resetNotificationCount();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Notifications(),
+                                  ),
+                                );
+                              }),
                           if (showBadge && count > 0)
                             Positioned(
                               right: 0,
@@ -174,9 +266,11 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                         ],
                       )),
                   onTap: () {
+                    resetNotificationCount();
                     setState(() {
                       showBadge = false; // Hide badge on icon click
                     });
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -185,6 +279,73 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                     );
                   },
                 )),
+            /*Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Consumer<NotificationProvider>(
+                builder: (context, provider, child) {
+                  return Container(
+                    margin: EdgeInsets.only(top: 30.sp, right: 10.sp),
+                    alignment: Alignment.topRight,
+                    child: Stack(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.notifications,
+                              size: 35.sp, color: Colors.orange),
+                          onPressed: () async {
+                            resetNotificationCount(provider);
+                            setState(() {
+                              showBadge = false;
+                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Notifications(),
+                              ),
+                            );
+                          },
+                        ),
+                        if (provider.notificationCount > 0 && showBadge)
+                          Positioned(
+                            right: 0,
+                            child: GestureDetector(
+                              child: Container(
+                                margin: EdgeInsets.only(right: 2.sp),
+                                padding: EdgeInsets.all(5.sp),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '${provider.notificationCount}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                resetNotificationCount(provider);
+                                setState(() {
+                                  showBadge = false;
+                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Notifications(),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),*/
             StreamBuilder<List<CategoriesResponse>>(
               stream: _categoriesStream,
               builder: (context, snapshot) {

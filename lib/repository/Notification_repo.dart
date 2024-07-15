@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Model/NotificationResponse.dart';
 
+import '../Database/DatabaseHelper.dart';
+
 class Notification_repo {
   Future<List<NotificationArr?>> getNotification(String userToken) async {
     var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
@@ -32,6 +34,10 @@ class Notification_repo {
         final List<NotificationArr> userList =
             t.map((item) => NotificationArr.fromJson(item)).toList();
         result = userList.toSet().toList();
+        int count =
+            int.parse(userList.length.toString()); // Convert String to int
+        await DatabaseHelper().insertNotificationCount(count);
+        print("count:" + count.toString());
       } else {
         result = List.empty();
       }

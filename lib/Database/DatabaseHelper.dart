@@ -97,7 +97,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sudapedia/SendOTP.dart';
+//import 'package:sqflite/sqflitepackage:path/path.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -123,7 +123,8 @@ class DatabaseHelper {
       onCreate: (db, version) {
         return db.execute(
           //  'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT)',
-          'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT, insertedAt INTEGER)',
+          //   'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT, insertedAt INTEGER)',
+          'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT, insertedAt INTEGER,notificationCount INTEGER DEFAULT 3)',
         );
       },
     );
@@ -254,7 +255,7 @@ class DatabaseHelper {
   }*/
 
   Future<String?> getToken1(BuildContext context) async {
-    final db = await database;
+    /*   final db = await database;
     final List<Map<String, dynamic>> maps =
         await db.query('employees', columns: ['userToken', 'insertedAt']);
 
@@ -278,6 +279,15 @@ class DatabaseHelper {
       }
     } else {
       return null;
+    }*/
+    final db = await database;
+    final List<Map<String, dynamic>> maps =
+        await db.query('employees', columns: ['userToken']);
+
+    if (maps.isNotEmpty) {
+      return maps.first['userToken'] as String?;
+    } else {
+      return null;
     }
   }
 
@@ -299,8 +309,58 @@ class DatabaseHelper {
     return maps.isNotEmpty;
   }
 
-  Future<void> clearUserSession() async {
+  /*Future<void> clearUserSession() async {
     final db = await database;
     await db.delete('employees');
+  }*/
+
+  Future<void> insertNotificationCount(int notificationCount) async {
+    final db = await database;
+    // Check if there's an existing row
+    final List<Map<String, dynamic>> maps = await db.query('employees');
+
+    if (maps.isEmpty) {
+      await db.insert(
+        'employees',
+        {'notificationCount': notificationCount},
+      );
+    } else {
+      await db.update(
+        'employees',
+        {'notificationCount': notificationCount},
+        where: 'id = ?',
+        whereArgs: [maps.first['id']],
+      );
+    }
+
+    print("Inserted notificationCount: $notificationCount");
+  }
+
+  Future<void> updateNotificationCount(int count) async {
+    final db = await database;
+    await db.update(
+      'employees',
+      {'notificationCount': count},
+      where: 'id = ?',
+      whereArgs: [1], // Assuming you have a single row for notification count
+    );
+    print("updateNotificationCount: $count");
+  }
+
+  Future<int?> getNotificationCount() async {
+    final db = await database;
+    final result = await db.query(
+      'employees',
+      columns: ['notificationCount'],
+      where: 'id = ?',
+      whereArgs: [1],
+    );
+
+    if (result.isNotEmpty) {
+      print("notificationCountFromDB:" +
+          result.first['notificationCount'].toString());
+      return result.first['notificationCount'] as int?;
+    }
+    return null;
   }
 }

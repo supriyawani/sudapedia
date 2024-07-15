@@ -2,9 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pdfrx/pdfrx.dart';
 
 class PDFViewerFromUrl extends StatefulWidget {
   final String pdfUrl;
@@ -20,7 +19,7 @@ class PDFViewerFromUrl extends StatefulWidget {
 class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
   bool isLoading = true;
   String? localPath;
-  PdfViewerController pdfController = PdfViewerController();
+  // PdfViewerController pdfController = PdfViewerController();
 
   @override
   void initState() {
@@ -61,10 +60,10 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD
-      /* appBar: AppBar(
+/*<<<<<<< HEAD
+      */ /* appBar: AppBar(
         title: Text('PDF Viewer'),
-      ),*/
+      ),*/ /*
 =======
       appBar: AppBar(
         title: const Text('PDF Viewer'),
@@ -76,38 +75,38 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
         //       child: Text("Zomm"))
         // ],
       ),
->>>>>>> c777c68 (ios build done)
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : localPath != null
+>>>>>>> c777c68 (ios build done)*/
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : /*localPath != null
               ? PdfDocumentViewBuilder.asset(localPath!,
                   builder: (context, document) {
                   return PdfViewer.asset(
                     localPath!,
                     controller: pdfController,
                   );
-                })
+                })*/
 
-              /*PDFView(
-                  filePath: localPath,
-                  enableSwipe: true,
-                  swipeHorizontal: false,
-                  autoSpacing: false,
-                  pageFling: false,
-                  fitPolicy: FitPolicy.BOTH,
-                  onRender: (pages) {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  },
-                  onError: (error) {
-                    print(error.toString());
-                  },
-                  onPageError: (page, error) {
-                    print('$page: ${error.toString()}');
-                  },
-                )*/
-              : Center(child: Text('Error loading PDF')),
-    );
+            PDFView(
+                filePath: localPath,
+                enableSwipe: true,
+                swipeHorizontal: false,
+                autoSpacing: false,
+                pageFling: false,
+                fitPolicy: FitPolicy.BOTH,
+                onRender: (pages) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                },
+                onError: (error) {
+                  print(error.toString());
+                },
+                onPageError: (page, error) {
+                  print('$page: ${error.toString()}');
+                },
+              )
+        // : Center(child: Text('Error loading PDF')),
+        );
   }
 }

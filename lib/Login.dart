@@ -99,7 +99,7 @@ class _LoginState extends State<Login> {
           /*await SessionManager.setLoginTime(
               DateTime.now(), response.userToken.toString());*/
           //SessionTimeoutManager.startLogoutTimer(context);
-          await _savenotificationCount(response.notification_count.toString());
+          // await _savenotificationCount(response.notification_count.toString());
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Pigments()));
         } else {
@@ -116,8 +116,11 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _savenotificationCount(String notificationCount) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('notificationcount', notificationCount);
+    //  SharedPreferences prefs = await SharedPreferences.getInstance();
+    //await prefs.setString('notificationcount', notificationCount);
+    // await DatabaseHelper().insertNotificationCount(notificationCount as int);
+    int count = int.parse(notificationCount); // Convert String to int
+    await DatabaseHelper().insertNotificationCount(count);
   }
 
   void _saveLoginInfo() async {
