@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Common/Constant.dart';
+import 'package:sudapedia/Common/app_styles_constant.dart';
 import 'package:sudapedia/repository/Login_repo.dart';
 
 import 'Login.dart';
@@ -114,13 +115,19 @@ class _SendOTPState extends State<SendOTP> {
                     alignment: Alignment.center,
                     margin: EdgeInsets.only(left: 15.sp, right: 15.sp),
                     child: TextFormField(
+                      style: AppStylesConstant.regularFontStyle(deviceType),
                       controller: _employeeIDController,
                       keyboardType: TextInputType.number,
                       maxLength: 12,
                       decoration: InputDecoration(
+                        errorStyle: AppStylesConstant.textFieldCountErrorStyle(
+                            deviceType),
+                        counterStyle:
+                            AppStylesConstant.textFieldCountErrorStyle(
+                                deviceType),
                         hintText: "EmployeeID",
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 15.0, horizontal: 25.0),
+                        contentPadding:
+                            AppStylesConstant.contentPadding(deviceType),
                         labelStyle: TextStyle(fontWeight: FontWeight.bold),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -176,9 +183,8 @@ class _SendOTPState extends State<SendOTP> {
                                   ? CircularProgressIndicator() // Show loading indicator if API call is in progress
                                   : Text(
                                       "Send OTP",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15.sp),
+                                      style: AppStylesConstant.boldFontStyle(
+                                          deviceType),
                                     ),
                               decoration: BoxDecoration(
                                 color: Colors.white,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Common/app_styles_constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Pigments.dart';
 import 'package:sudapedia/repository/Otp_repo.dart';
@@ -168,15 +169,22 @@ class _LoginState extends State<Login> {
                         margin: EdgeInsets.only(
                             left: 15.sp, right: 15.sp, bottom: 10.sp),
                         child: TextFormField(
+                          style: AppStylesConstant.regularFontStyle(deviceType),
                           controller: _employeeIDController,
                           //  initialValue: _employeeID.toString(),
                           key: Key("_employeeID"),
                           keyboardType: TextInputType.number,
                           maxLength: 12,
                           decoration: InputDecoration(
+                            errorStyle:
+                                AppStylesConstant.textFieldCountErrorStyle(
+                                    deviceType),
+                            counterStyle:
+                                AppStylesConstant.textFieldCountErrorStyle(
+                                    deviceType),
                             hintText: "EmployeeID",
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 15.0, horizontal: 25.0),
+                            contentPadding:
+                                AppStylesConstant.contentPadding(deviceType),
                             labelStyle: TextStyle(fontWeight: FontWeight.bold),
                             enabledBorder: OutlineInputBorder(
                               borderRadius:
@@ -213,14 +221,21 @@ class _LoginState extends State<Login> {
                         margin: EdgeInsets.only(
                             left: 15.sp, right: 15.sp, bottom: 10.sp),
                         child: TextFormField(
+                          style: AppStylesConstant.regularFontStyle(deviceType),
                           controller: _OTPController,
                           key: Key("_Otp"),
                           keyboardType: TextInputType.number,
                           maxLength: 4,
                           decoration: InputDecoration(
+                            counterStyle:
+                                AppStylesConstant.textFieldCountErrorStyle(
+                                    deviceType),
+                            errorStyle:
+                                AppStylesConstant.textFieldCountErrorStyle(
+                                    deviceType),
                             hintText: "OTP",
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 15.0, horizontal: 25.0),
+                            contentPadding:
+                                AppStylesConstant.contentPadding(deviceType),
                             labelStyle: TextStyle(fontWeight: FontWeight.bold),
                             enabledBorder: OutlineInputBorder(
                               borderRadius:

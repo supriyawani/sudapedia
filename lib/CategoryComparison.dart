@@ -219,7 +219,10 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                                               subcategory.name,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 12.sp,
+                                                fontSize: deviceType ==
+                                                        DeviceType.tablet
+                                                    ? 9.sp
+                                                    : 12.sp,
                                                 color: Colors.black,
                                               ),
                                             ),

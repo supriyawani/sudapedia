@@ -17,6 +17,7 @@ class PDFViewerFromUrl extends StatefulWidget {
 }
 
 class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
+  String downloadablePdfUrl = "";
   bool isLoading = true;
   String? localPath;
   // PdfViewerController pdfController = PdfViewerController();
@@ -24,6 +25,10 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
   @override
   void initState() {
     super.initState();
+    debugPrint("PDF URL: ${widget.pdfUrl}");
+    downloadablePdfUrl = widget.pdfUrl.replaceAll(" ", "%20");
+    //widget.pdfUrl.replaceAll(" ", "%20");
+    debugPrint("downloadablePdfUrl: $downloadablePdfUrl");
     downloadAndLoadPdf();
   }
 
@@ -37,16 +42,19 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
       String appDocPath = appDocDir.path;
 
       // Extract the file name from the URL
-      String fileName = widget.pdfUrl.split('/').last;
+      String fileName = downloadablePdfUrl.split('/').last;
 
       // Define the full file path
-      String fullPath = '$appDocPath/$fileName';
+      String fullPath = '$appDocPath/$fileName'.replaceAll("%20", "_");
+      debugPrint("Full Path: $fullPath");
 
       // Download the file
-      await dio.download(widget.pdfUrl, fullPath);
+      await dio.download(downloadablePdfUrl, fullPath);
 
       setState(() {
         localPath = fullPath;
+        debugPrint("Local Path: $localPath");
+
         isLoading = false;
       });
     } catch (e) {
@@ -60,11 +68,14 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
 /*<<<<<<< HEAD
       */ /* appBar: AppBar(
         title: Text('PDF Viewer'),
       ),*/ /*
 =======
+=======
+>>>>>>> e479a51 (iOS Tablet support)
       appBar: AppBar(
         title: const Text('PDF Viewer'),
         // actions: [
@@ -75,12 +86,19 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
         //       child: Text("Zomm"))
         // ],
       ),
+<<<<<<< HEAD
 >>>>>>> c777c68 (ios build done)*/
         body: isLoading
             ? Center(child: CircularProgressIndicator())
             : /*localPath != null
+=======
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : localPath != null
+>>>>>>> e479a51 (iOS Tablet support)
               ? PdfDocumentViewBuilder.asset(localPath!,
                   builder: (context, document) {
+                  debugPrint(localPath);
                   return PdfViewer.asset(
                     localPath!,
                     controller: pdfController,

@@ -122,7 +122,8 @@ class _PigmentsState extends State<Pigments> {
                     ),
                     GestureDetector(
                       child: Container(
-                        alignment: Alignment.topRight,
+                        //color: Colors.yellow,
+                        alignment: Alignment.center,
                         // margin: EdgeInsets.symmetric(horizontal: 5.sp),
                         margin: EdgeInsets.symmetric(horizontal: 20.sp),
                         // margin: EdgeInsets.only(left: 20.sp, right: 20.sp),
