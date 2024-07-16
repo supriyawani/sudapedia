@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdfrx/pdfrx.dart';
 
 class PDFViewerFromUrl extends StatefulWidget {
   final String pdfUrl;
@@ -20,7 +21,7 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
   String downloadablePdfUrl = "";
   bool isLoading = true;
   String? localPath;
-  // PdfViewerController pdfController = PdfViewerController();
+  PdfViewerController pdfController = PdfViewerController();
 
   @override
   void initState() {
@@ -68,14 +69,6 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD
-/*<<<<<<< HEAD
-      */ /* appBar: AppBar(
-        title: Text('PDF Viewer'),
-      ),*/ /*
-=======
-=======
->>>>>>> e479a51 (iOS Tablet support)
       appBar: AppBar(
         title: const Text('PDF Viewer'),
         // actions: [
@@ -86,16 +79,9 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
         //       child: Text("Zomm"))
         // ],
       ),
-<<<<<<< HEAD
->>>>>>> c777c68 (ios build done)*/
-        body: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : /*localPath != null
-=======
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : localPath != null
->>>>>>> e479a51 (iOS Tablet support)
               ? PdfDocumentViewBuilder.asset(localPath!,
                   builder: (context, document) {
                   debugPrint(localPath);
@@ -103,28 +89,8 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
                     localPath!,
                     controller: pdfController,
                   );
-                })*/
-
-            PDFView(
-                filePath: localPath,
-                enableSwipe: true,
-                swipeHorizontal: false,
-                autoSpacing: false,
-                pageFling: false,
-                fitPolicy: FitPolicy.BOTH,
-                onRender: (pages) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                },
-                onError: (error) {
-                  print(error.toString());
-                },
-                onPageError: (page, error) {
-                  print('$page: ${error.toString()}');
-                },
-              )
-        // : Center(child: Text('Error loading PDF')),
-        );
+                })
+              : Center(child: Text('Error loading PDF')),
+    );
   }
 }
