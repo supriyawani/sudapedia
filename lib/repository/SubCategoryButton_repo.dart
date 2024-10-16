@@ -6,7 +6,7 @@ import 'package:sudapedia/Model/SubCategoryButtonResponse.dart';
 
 class SubCategoryButton_repo {
   Future<List<ColorCode_arr?>> getSubcategorybuttonList(
-      String userToken, String id, String subCategoryid) async {
+      String userToken, String id, String subCategoryid, String groupId) async {
     var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
     var request = http.Request(
         'POST', Uri.parse(Constant.url + Constant.url_subcategoryButtons));
@@ -16,6 +16,7 @@ class SubCategoryButton_repo {
       'UserToken': userToken,
       'category_id': id.trim(),
       'SubCategory_id': subCategoryid.trim(),
+      Constant.groupID: groupId
     };
     print("body:" + request.bodyFields.toString());
     request.headers.addAll(headers);
@@ -63,7 +64,7 @@ class SubCategoryButton_repo {
   }
 
   Future<String?> getsubCategoryName(
-      String userToken, String id, String subCategoryid) async {
+      String userToken, String id, String subCategoryid, String groupID) async {
     var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
     print(Constant.url + Constant.url_subcategoryButtons);
     var request = http.MultipartRequest(
@@ -73,6 +74,7 @@ class SubCategoryButton_repo {
       'UserToken': userToken,
       'category_id': id,
       'SubCategory_id': subCategoryid,
+      Constant.groupID: groupID
     };
     print("bodyfields" + bodyfields.toString());
 

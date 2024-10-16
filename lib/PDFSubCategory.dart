@@ -111,10 +111,11 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
   // _CategoryDetailsState(this.id);
 
   loadPosts() async {
+    String? groupId = await DatabaseHelper().getGroupID();
     var apiProvider = PDFSubCategory_repo();
     apiProvider
         .getPDFList(userToken.toString(), id.toString(), subcat_id.toString(),
-            color_id.toString(), color_code_id.toString())
+            color_id.toString(), color_code_id.toString(), groupId.toString())
         .then((res) async {
       _postsController?.add(res);
       return res;
@@ -142,12 +143,14 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
       }
     });*/
     try {
+      String? groupId = await DatabaseHelper().getGroupID();
       String? result = await PDFSubCategory_repo().getColorDetailsTitle(
           userToken.toString(),
           widget.id,
           subcat_id.toString(),
           color_id.toString(),
-          color_code_id);
+          color_code_id,
+          groupId.toString());
       if (result != null) {
         setState(() {
           print("result:" + result.toString());

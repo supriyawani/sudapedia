@@ -8,12 +8,6 @@ import 'package:sudapedia/SendOTP.dart';
 
 void main() {
   runApp(const MyApp());
-  /* runApp(
-    ChangeNotifierProvider(
-      create: (context) => NotificationProvider(),
-      child: MyApp(),
-    ),
-  );*/
 }
 
 class MyApp extends StatelessWidget {

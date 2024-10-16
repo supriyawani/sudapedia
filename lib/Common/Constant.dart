@@ -3,9 +3,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sudapedia/SendOTP.dart';
 
 class Constant {
-  static String url = "https://sudapedia.sudarshan.com/Admin/web-api/";
+  //static String url = "https://sudapedia.sudarshan.com/Admin/web-api/";
+  static String url = "https://beta-sudapedia.sudarshan.com/Admin/web-api/";
   static String url_pdf_path = "https://sudapedia.sudarshan.com/Admin/";
   static String url_login = "Login.php";
+  static String url_logout = "logout.php";
   static String url_otp = "Otp.php";
   static String url_categories = "Categories.php";
   static String api_key = "8c961641025d48b7b89d475054d656da";
@@ -13,8 +15,12 @@ class Constant {
   static String url_pdf = "PDFs.php";
   static String url_subcategoryButtons = "SubCategoryButtons.php";
   static String url_subcategoryButtonsDetails = "SubCategoryButtonsDetails.php";
+  static String url_comparison = "Comparisons.php";
 
   static String url_notification = "notification.php";
+
+  static String groupID = "group_id";
+  static String apiKey = "8c961641025d48b7b89d475054d656da";
 
   static Color getColor(String code) {
     switch (code) {

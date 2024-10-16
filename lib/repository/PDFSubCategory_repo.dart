@@ -8,8 +8,13 @@ import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Model/PDFSubCategoryResponse.dart';
 
 class PDFSubCategory_repo {
-  Future<List<PdfArrforSubCategory?>> getPDFList(String userToken, String id,
-      String subCategoryid, String colorId, String colorcodeid) async {
+  Future<List<PdfArrforSubCategory?>> getPDFList(
+      String userToken,
+      String id,
+      String subCategoryid,
+      String colorId,
+      String colorcodeid,
+      String groupID) async {
     var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
     var request = http.MultipartRequest(
         'POST', Uri.parse(Constant.url + Constant.url_pdf));
@@ -21,6 +26,7 @@ class PDFSubCategory_repo {
       'SubCategory_id': subCategoryid,
       'color_id': colorId,
       'color_code_id': colorcodeid,
+      Constant.groupID: groupID
     };
     print("bodyFields:" + bodyFields.toString());
     //request.headers.addAll(headers);
@@ -60,8 +66,13 @@ class PDFSubCategory_repo {
     return result;
   }
 
-  Future<String?> getColorDetailsTitle(String userToken, String id,
-      String subCategoryid, String colorId, String colorcodeid) async {
+  Future<String?> getColorDetailsTitle(
+      String userToken,
+      String id,
+      String subCategoryid,
+      String colorId,
+      String colorcodeid,
+      String groupID) async {
     var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
     print(Constant.url + Constant.url_categorydetails);
     var request = http.MultipartRequest(
@@ -73,6 +84,7 @@ class PDFSubCategory_repo {
       'SubCategory_id': subCategoryid,
       'color_id': colorId,
       'color_code_id': colorcodeid,
+      Constant.groupID: groupID
     };
     print("bodyfields:" + bodyfields.toString());
 

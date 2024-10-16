@@ -35,8 +35,8 @@ class _CategoryComparisonState extends State<CategoryComparison> {
     super.initState();
     getToken();
     _prefs.then((SharedPreferences prefs) async {
-      id = prefs.getString('id')!;
-      code = prefs.getString('code')!;
+      id = prefs.getString('id').toString()!;
+      code = prefs.getString('code').toString()!;
     });
     print("id:" + id);
     print("code:" + code);
@@ -61,9 +61,11 @@ class _CategoryComparisonState extends State<CategoryComparison> {
       id = prefs.getString('id') ?? '';
       code = prefs.getString('code') ?? '';
     });*/
-    setState(() {
-      futureCategoryResponse = Comparison_repo()
-          .fetchCategoryData(userToken.toString(), id.toString());
+
+    setState(() async {
+      String? groupId = await DatabaseHelper().getGroupID();
+      futureCategoryResponse = Comparison_repo().fetchCategoryData(
+          userToken.toString(), id.toString(), groupId.toString());
     });
   }
 
@@ -82,8 +84,9 @@ class _CategoryComparisonState extends State<CategoryComparison> {
 
           // saveData(result);
         }*/
+      String? groupId = await DatabaseHelper().getGroupID();
       String? result = await Comparison_repo()
-          .getCategoryName(userToken.toString(), widget.id);
+          .getCategoryName(userToken.toString(), widget.id, groupId.toString());
       if (result != null) {
         setState(() {
           print("result:" + result.toString());

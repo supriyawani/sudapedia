@@ -89,6 +89,7 @@ class _LoginState extends State<Login> {
 
           if (success) {
             print("User token inserted successfully!");
+            await dbHelper.insertGroupID(response.result!.group_id.toString());
           } else {
             print("Failed to insert user token.");
           }

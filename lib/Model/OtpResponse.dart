@@ -47,6 +47,7 @@ class OtpResponse {
 
 class Result {
   String? id;
+  String? group_id;
   String? email;
   String? password;
   String? name;
@@ -62,6 +63,7 @@ class Result {
 
   Result(
       {this.id,
+      this.group_id,
       this.email,
       this.password,
       this.name,
@@ -77,6 +79,7 @@ class Result {
 
   Result.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
+    group_id = json['group_id'];
     email = json['Email'];
     password = json['Password'];
     name = json['Name'];
@@ -94,6 +97,7 @@ class Result {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['Id'] = this.id;
+    data['group_id'] = this.group_id;
     data['Email'] = this.email;
     data['Password'] = this.password;
     data['Name'] = this.name;

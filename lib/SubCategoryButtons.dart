@@ -79,9 +79,10 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
 
   loadPosts() async {
     var apiProvider = SubCategoryButton_repo();
+    String? groupId = await DatabaseHelper().getGroupID();
     apiProvider
         .getSubcategorybuttonList(
-            userToken.toString(), id.toString(), subcat_id)
+            userToken.toString(), id.toString(), subcat_id, groupId.toString())
         .then((res) async {
       _postsController?.add(res);
       return res;
@@ -109,8 +110,12 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
       }
     });*/
     try {
+      String? groupId = await DatabaseHelper().getGroupID();
       String? result = await SubCategoryButton_repo().getsubCategoryName(
-          userToken.toString(), widget.id, subcat_id.toString());
+          userToken.toString(),
+          widget.id,
+          subcat_id.toString(),
+          groupId.toString());
       if (result != null) {
         setState(() {
           print("result:" + result.toString());

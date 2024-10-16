@@ -124,7 +124,7 @@ class DatabaseHelper {
         return db.execute(
           //  'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT)',
           //   'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT, insertedAt INTEGER)',
-          'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT, insertedAt INTEGER,notificationCount INTEGER DEFAULT 3)',
+          'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT,groupID TEXT, userToken TEXT, insertedAt INTEGER,notificationCount INTEGER DEFAULT 3)',
         );
       },
     );
@@ -152,7 +152,28 @@ class DatabaseHelper {
     print("Inserted employeeID: $employeeID");
   }
 
-  Future<void> insertToken(String userToken) async {
+  Future<void> insertGroupID(String groupID) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('employees');
+
+    if (maps.isEmpty) {
+      await db.insert(
+        'employees',
+        {'groupID': groupID},
+      );
+    } else {
+      await db.update(
+        'employees',
+        {'groupID': groupID},
+        where: 'id = ?',
+        whereArgs: [maps.first['id']],
+      );
+    }
+
+    print("Inserted groupID: $groupID");
+  }
+
+  /*Future<void> insertToken(String userToken) async {
     final db = await database;
     // Check if there's an existing row
     final List<Map<String, dynamic>> maps = await db.query('employees');
@@ -170,33 +191,8 @@ class DatabaseHelper {
         whereArgs: [maps.first['id']],
       );
     }
-  }
-
-  /*Future<bool> insertToken1(String userToken) async {
-    try {
-      final db = await database;
-      final List<Map<String, dynamic>> maps = await db.query('employees');
-
-      if (maps.isEmpty) {
-        await db.insert(
-          'employees',
-          {'userToken': userToken},
-        );
-      } else {
-        await db.update(
-          'employees',
-          {'userToken': userToken},
-          where: 'id = ?',
-          whereArgs: [maps.first['id']],
-        );
-      }
-
-      return true;
-    } catch (e) {
-      print("Error inserting user token: $e");
-      return false;
-    }
   }*/
+
   Future<bool> insertToken1(String userToken) async {
     try {
       final db = await database;
@@ -224,7 +220,7 @@ class DatabaseHelper {
     }
   }
 
-  void startTokenExpiryCheck() {
+  /* void startTokenExpiryCheck() {
     Timer.periodic(Duration(hours: 1), (timer) async {
       final db = await database;
       final int currentTime = DateTime.now().millisecondsSinceEpoch;
@@ -240,46 +236,9 @@ class DatabaseHelper {
         }
       }
     });
-  }
-
-  /*Future<String?> getToken() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps =
-        await db.query('employees', columns: ['userToken']);
-
-    if (maps.isNotEmpty) {
-      return maps.first['userToken'] as String?;
-    } else {
-      return null;
-    }
   }*/
 
   Future<String?> getToken1(BuildContext context) async {
-    /*   final db = await database;
-    final List<Map<String, dynamic>> maps =
-        await db.query('employees', columns: ['userToken', 'insertedAt']);
-
-    if (maps.isNotEmpty) {
-      final int insertedAt = maps.first['insertedAt'] as int;
-      final DateTime insertedTime =
-          DateTime.fromMillisecondsSinceEpoch(insertedAt);
-      final DateTime currentTime = DateTime.now();
-
-      //if (currentTime.difference(insertedTime).inMinutes >= 10) {
-      if (currentTime.difference(insertedTime).inHours >= 24) {
-        // Token is older than 24 hours, delete it and redirect to SendOTP
-        await clearUserSession();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => SendOTP()),
-        );
-        return null;
-      } else {
-        return maps.first['userToken'] as String?;
-      }
-    } else {
-      return null;
-    }*/
     final db = await database;
     final List<Map<String, dynamic>> maps =
         await db.query('employees', columns: ['userToken']);
@@ -301,6 +260,26 @@ class DatabaseHelper {
     } else {
       return null;
     }
+  }
+
+  Future<String?> getGroupID() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps =
+        await db.query('employees', columns: ['groupID']);
+
+    print("Group ID Query Result: $maps"); // Add this line to check the result
+
+    if (maps.isNotEmpty) {
+      return maps.first['groupID'] as String?;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> clearTable() async {
+    final db = await database;
+    await db.delete('employees');
+    //print("tokendeleted:"+getToken1(context as BuildContext));
   }
 
   Future<bool> isUserLoggedIn() async {

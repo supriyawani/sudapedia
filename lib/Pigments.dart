@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:sizer/sizer.dart';
+import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/NewHomeScreen.dart';
 import 'package:sudapedia/SendOTP.dart';
@@ -154,7 +155,7 @@ class _PigmentsState extends State<Pigments> {
   }
 
   Future<void> getToken() async {
-    userToken = (await DatabaseHelper().getToken1(context));
+    userToken = await DatabaseHelper().getToken1(context);
     employeeId = (await DatabaseHelper().getEmployeeID());
     //userToken = "1E5O3tCJuz03bib";
     print("Token:" + userToken!);
@@ -170,17 +171,26 @@ class _PigmentsState extends State<Pigments> {
     };
 
     var response = await http.post(
-        Uri.parse("https://sudapedia.sudarshan.com/Admin/web-api/logout.php"),
+        //  Uri.parse("https://sudapedia.sudarshan.com/Admin/web-api/logout.php"),
+        Uri.parse(Constant.url + Constant.url_logout),
         headers: headers,
         body: body);
     print(response.body.toString());
     print(response.body);
-    if (response.body.contains("Logout Successfully !!")) {
+    //if (response.body.contains("Logout Successfully !!")) {
+    //if (response.body.contains("Inavlid User Token Key")) {
+    if (response.body.contains("Inavlid User Token Key") ||
+        response.body.contains("Logout Successfully !!")) {
       final jsonResponse = jsonDecode(response.body);
-      if (jsonResponse['msg'] == 'Logout Successfully !!') {
+      if ((jsonResponse['msg'] == 'Logout Successfully !!') ||
+          (jsonResponse['msg'] == 'Inavlid User Token Key')) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(jsonResponse['msg'])),
         );
+        DatabaseHelper dbHelper = DatabaseHelper();
+        dbHelper.clearTable();
+        getToken();
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => SendOTP()),

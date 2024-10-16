@@ -5,13 +5,15 @@ import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Model/CategoriesResponse.dart';
 
 class Category_repo {
-  Stream<List<CategoriesResponse>> getCategoryStream(String userToken) async* {
+  Stream<List<CategoriesResponse>> getCategoryStream(
+      String userToken, String groupID) async* {
     var request = http.MultipartRequest(
         'POST', Uri.parse(Constant.url + Constant.url_categories));
     print("userToken:" + userToken);
     request.fields.addAll({
       'apiKey': "8c961641025d48b7b89d475054d656da",
       'UserToken': userToken,
+      Constant.groupID: groupID.toString()
     });
 
     http.StreamedResponse response = await request.send();

@@ -85,10 +85,11 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
   // _CategoryDetailsState(this.id);
 
   loadPosts() async {
+    String? groupId = await DatabaseHelper().getGroupID();
     var apiProvider = SubCategoryButtonDetails_repo();
     apiProvider
-        .getSubcategorybuttonDetailsList(
-            userToken.toString(), id.toString(), subcat_id, color_id)
+        .getSubcategorybuttonDetailsList(userToken.toString(), id.toString(),
+            subcat_id, color_id, groupId.toString())
         .then((res) async {
       _postsController?.add(res);
       return res;
@@ -116,8 +117,13 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
       }
     });*/
     try {
+      String? groupId = await DatabaseHelper().getGroupID();
       String? result = await SubCategoryButtonDetails_repo().getcolorTitle(
-          userToken.toString(), widget.id, subcat_id.toString(), color_id);
+          userToken.toString(),
+          widget.id,
+          subcat_id.toString(),
+          color_id,
+          groupId.toString());
       if (result != null) {
         setState(() {
           print("result:" + result.toString());
