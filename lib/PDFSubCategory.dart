@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Common/BackgroundWithLogo.dart';
 import 'package:sudapedia/Common/Constant.dart';
+import 'package:sudapedia/Common/app_styles_constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/PDFViewerFromUrl.dart';
 import 'package:sudapedia/repository/PDFSubCategory_repo.dart';
@@ -226,8 +227,8 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
 
                                   //  bool isDownloaded = snapshot.data!;
                                   return Container(
-                                    margin: EdgeInsets.only(
-                                        left: 10.sp, right: 10.sp),
+                                    margin: AppStylesConstant.marginEdgeInsets(
+                                        deviceType),
                                     child: ClipRRect(
                                       //  borderRadius: BorderRadius.circular(20.sp),
                                       child: Stack(
@@ -250,15 +251,19 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
                                                       .spaceBetween,
                                               children: [
                                                 Expanded(
-                                                    child: Text(
-                                                  dataList[index].pDFName ??
-                                                      'No Name',
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    color: Colors
-                                                        .black, // Replace with your desired color
+                                                    child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10),
+                                                  child: Text(
+                                                    dataList[index].pDFName ??
+                                                        'No Name',
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: AppStylesConstant
+                                                        .regularFontStyle(
+                                                            deviceType),
                                                   ),
                                                 )),
                                                 GestureDetector(
@@ -267,8 +272,11 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
                                                           EdgeInsets.all(5.sp),
                                                       child: Text(
                                                         "show",
-                                                        style: TextStyle(
-                                                            color: Colors.blue),
+                                                        style: AppStylesConstant
+                                                            .regularFontStyle(
+                                                                deviceType,
+                                                                color: Colors
+                                                                    .blue),
                                                       )),
                                                   onTap: () {
                                                     pdf_id = dataList[index]

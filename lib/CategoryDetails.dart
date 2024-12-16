@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Common/BackgroundWithLogo.dart';
 import 'package:sudapedia/Common/Constant.dart';
+import 'package:sudapedia/Common/app_styles_constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/PDFViewerFromUrl.dart';
 import 'package:sudapedia/repository/CategoryDetails_repo.dart';
@@ -281,25 +282,31 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                                       .spaceBetween,
                                               children: [
                                                 Expanded(
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 15),
                                                     child: Text(
-                                                  dataList[index].pDFName ??
-                                                      'No Name',
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    color: Colors
-                                                        .black, // Replace with your desired color
+                                                      dataList[index].pDFName ??
+                                                          'No Name',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: AppStylesConstant
+                                                          .regularFontStyle(
+                                                              deviceType), // Replace with your desired color
+                                                    ),
                                                   ),
-                                                )),
+                                                ),
                                                 GestureDetector(
                                                   child: Container(
                                                       margin:
                                                           EdgeInsets.all(5.sp),
                                                       child: Text(
                                                         "show",
-                                                        style: TextStyle(
-                                                            color: Colors.blue),
+                                                        style: AppStylesConstant
+                                                            .regularFontStyle(
+                                                                deviceType),
                                                       )),
                                                   onTap: () {
                                                     pdf_id = dataList[index]
