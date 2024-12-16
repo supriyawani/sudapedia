@@ -13,13 +13,13 @@ class Comparison_repo {
       String userToken, String id, String groupID) async {
     var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
     var body = {
-      'apiKey': '8c961641025d48b7b89d475054d656da',
-      'UserToken': userToken,
+      Constant.apiKey: Constant.apiKey_value,
+      Constant.UserToken: userToken,
       'category_id': id,
       Constant.groupID: groupID
       //'category_id': '12',
     };
-
+    print("body:" + body.toString());
     var response =
         await http.post(Uri.parse(apiUrl), headers: headers, body: body);
     print("response:" + response.body);
@@ -37,8 +37,8 @@ class Comparison_repo {
     // print(Constant.url + Constant.url_categorydetails);
     var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
     var bodyfields = {
-      'apiKey': "8c961641025d48b7b89d475054d656da",
-      'UserToken': userToken,
+      Constant.apiKey: Constant.apiKey_value,
+      Constant.UserToken: userToken,
       'category_id': id,
       Constant.groupID: groupID
     };

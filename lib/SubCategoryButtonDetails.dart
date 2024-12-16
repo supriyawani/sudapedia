@@ -38,6 +38,7 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
   String id = "", code = "", subcat_id = "", color_id = "", categoryName = "";
   String? colorTitle = "";
   Stream<List<ColorCode_arr>> _categoriesStream = Stream.value([]);
+  String? Category;
 
   _SubCategoryButtonDetailsState(String id, String code, String subcat_id,
       String color_id, String categoryName) {
@@ -68,6 +69,7 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
     print("subcat_id:" + subcat_id);
     print("color_id:" + color_id);
     print("categoryName:" + categoryName);
+    Category = categoryName;
   }
 
   Future<void> getToken() async {
@@ -85,7 +87,9 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
   // _CategoryDetailsState(this.id);
 
   loadPosts() async {
-    String? groupId = await DatabaseHelper().getGroupID();
+    // String? groupId = await DatabaseHelper().getGroupID();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? groupId = prefs.getString(Constant.groupID);
     var apiProvider = SubCategoryButtonDetails_repo();
     apiProvider
         .getSubcategorybuttonDetailsList(userToken.toString(), id.toString(),
@@ -97,27 +101,10 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
   }
 
   void getCategoryName() async {
-    /*SubCategoryButtonDetails_repo()
-        .getcolorTitle(
-            userToken.toString(), id.toString(), subcat_id.toString(), color_id)
-        .then((result) {
-      if (result != null) {
-        setState(() {
-          print("result:" + result.toString());
-          colorTitle = result.toString();
-          print("categoryName:" + colorTitle.toString());
-          loadPosts();
-        });
-
-        // saveData(result);
-      } else {
-        setState(() {
-          // Constant.displayToast("please enter valid credentials!");
-        });
-      }
-    });*/
     try {
-      String? groupId = await DatabaseHelper().getGroupID();
+      //String? groupId = await DatabaseHelper().getGroupID();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? groupId = prefs.getString(Constant.groupID);
       String? result = await SubCategoryButtonDetails_repo().getcolorTitle(
           userToken.toString(),
           widget.id,
@@ -129,6 +116,11 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
           print("result:" + result.toString());
           colorTitle = result.toString();
           print("categoryName:" + colorTitle.toString());
+          Constant.logCategoryItemTap(
+            categoryId: widget.id,
+            categoryName: colorTitle.toString(),
+          );
+          Constant().initMixpanel(categoryName.toString());
           loadPosts();
         });
       }
@@ -140,57 +132,15 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return /* GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
-        child: WillPopScope(onWillPop: () async {
-          SessionTimeoutManager.resetLogoutTimer(context);
-          return true;
-        }, child: */
-        Sizer(builder: (context, orientation, deviceType) {
+    return Sizer(builder: (context, orientation, deviceType) {
       return Scaffold(
         key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
-            /*  Container(
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  margin: EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/background_image.png"),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),*/
             BackgroundWithLogo(code: code),
             Container(
               child: Column(
                 children: [
-                  /*   Container(
-                        color: Constant.getColor(code.toString()),
-                        width: double.infinity, // Span the full width
-                        child: Image.asset(
-                          'assets/appbar_logo.png',
-                          fit: BoxFit.contain, // Adjust fit as needed
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
-                        color: Constant.getColor(code.toString()),
-                        width: double.infinity,
-                        child: Center(
-                          child: Text(
-                            categoryName.toString(),
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              //fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),*/
                   CustomAppBar(categoryName: categoryName, code: code),
                   Container(
                     padding: EdgeInsets.only(top: 5.sp, bottom: 2.sp),
@@ -310,8 +260,8 @@ class _SubCategoryButtonDetailsState extends State<SubCategoryButtonDetails> {
                                               style: TextStyle(fontSize: 15.sp
                                                   // Optional: add background color for better readability
                                                   ),
-                                              textAlign: TextAlign
-                                                  .center, // Center the text
+                                              textAlign: TextAlign.center,
+                                              // Center the text
                                             ),
                                           ),
                                         )),

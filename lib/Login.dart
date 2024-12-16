@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +8,8 @@ import 'package:sizer/sizer.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Pigments.dart';
 import 'package:sudapedia/repository/Otp_repo.dart';
+
+import 'Common/Constant.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -25,6 +28,7 @@ class _LoginState extends State<Login> {
 
   var isLoading = false;
   //late SessionManager _sessionTimeoutManager;
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   @override
   void initState() {
     super.initState();
@@ -86,10 +90,13 @@ class _LoginState extends State<Login> {
               await dbHelper.insertToken1(response.userToken.toString());
 
           await dbHelper.insertEmployeeID(_employeeID);
+          String GroupID = response.result!.group_id.toString();
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString(Constant.groupID, GroupID);
 
           if (success) {
             print("User token inserted successfully!");
-            await dbHelper.insertGroupID(response.result!.group_id.toString());
+            // await dbHelper.insertGroupID(response.result!.group_id.toString());
           } else {
             print("Failed to insert user token.");
           }
@@ -97,10 +104,6 @@ class _LoginState extends State<Login> {
           print("User token inserted successfully!");
           //_sessionTimeoutManager.startSession(context);
           _saveLoginInfo();
-          /*await SessionManager.setLoginTime(
-              DateTime.now(), response.userToken.toString());*/
-          //SessionTimeoutManager.startLogoutTimer(context);
-          // await _savenotificationCount(response.notification_count.toString());
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Pigments()));
         } else {
@@ -284,17 +287,6 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         onTap: isLoading ? null : _login,
-                        /* onTap: () async {
-                          String userToken = "FTGHI2W8XS";
-
-                          DatabaseHelper dbHelper = DatabaseHelper();
-                          await dbHelper.insertToken(userToken);
-                          //  await DatabaseHelper().insertToken(userToken);
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Pigments()));
-                        },*/
                       ),
                     ],
                   ),

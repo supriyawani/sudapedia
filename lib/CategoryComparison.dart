@@ -63,9 +63,14 @@ class _CategoryComparisonState extends State<CategoryComparison> {
     });*/
 
     setState(() async {
-      String? groupId = await DatabaseHelper().getGroupID();
+      // String? groupId = await DatabaseHelper().getGroupID();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? groupId = prefs.getString(Constant.groupID);
       futureCategoryResponse = Comparison_repo().fetchCategoryData(
-          userToken.toString(), id.toString(), groupId.toString());
+          //    userToken.toString(), id.toString(), groupId.toString());
+          userToken.toString(),
+          widget.id,
+          groupId.toString());
     });
   }
 
@@ -84,7 +89,9 @@ class _CategoryComparisonState extends State<CategoryComparison> {
 
           // saveData(result);
         }*/
-      String? groupId = await DatabaseHelper().getGroupID();
+      //String? groupId = await DatabaseHelper().getGroupID();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? groupId = prefs.getString(Constant.groupID);
       String? result = await Comparison_repo()
           .getCategoryName(userToken.toString(), widget.id, groupId.toString());
       if (result != null) {
@@ -92,6 +99,11 @@ class _CategoryComparisonState extends State<CategoryComparison> {
           print("result:" + result.toString());
           categoryName = result.toString();
           print("categoryName:" + categoryName.toString());
+          Constant.logCategoryItemTap(
+            categoryId: widget.id,
+            categoryName: categoryName.toString(),
+          );
+          Constant().initMixpanel(categoryName.toString());
           loadPreferences();
         });
       }
@@ -302,7 +314,7 @@ class _CategoryComparisonState extends State<CategoryComparison> {
                                                                 builder:
                                                                     (context) =>
                                                                         PDFSubCategory(
-                                                                  id: id,
+                                                                  id: widget.id,
                                                                   code: code
                                                                       .toString(),
                                                                   subcat_id:

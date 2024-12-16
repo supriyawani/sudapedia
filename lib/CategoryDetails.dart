@@ -117,6 +117,11 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           print("result:" + result.toString());
           categoryName = result.toString();
           print("categoryName:" + categoryName.toString());
+          Constant.logCategoryItemTap(
+            categoryId: widget.id,
+            categoryName: categoryName.toString(),
+          );
+          Constant().initMixpanel(categoryName.toString());
           loadPosts();
         });
       }

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'Common/Constant.dart';
+
 class PDFViewerFromUrl extends StatefulWidget {
   final String pdfUrl;
 
@@ -49,6 +51,10 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
         localPath = fullPath;
         isLoading = false;
       });
+      Constant.logpdf(
+        pdfname: fileName,
+      );
+      Constant().initMixpanel("" + fileName + "PDF viewed");
     } catch (e) {
       print('Error downloading PDF: $e');
       setState(() {

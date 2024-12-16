@@ -119,14 +119,22 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) {
         return db.execute(
           //  'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT)',
           //   'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, userToken TEXT, insertedAt INTEGER)',
-          'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT,groupID TEXT, userToken TEXT, insertedAt INTEGER,notificationCount INTEGER DEFAULT 3)',
+          //   'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT,groupID TEXT, userToken TEXT, insertedAt INTEGER,notificationCount INTEGER DEFAULT 3)',
+          'CREATE TABLE employees(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeID TEXT, groupID TEXT, userToken TEXT, insertedAt INTEGER, notificationCount INTEGER DEFAULT 3)',
         );
       },
+      /*onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          // Add the new column(s) or make other schema changes here
+          await db.execute('ALTER TABLE employees ADD COLUMN groupID TEXT');
+        }
+        // Add more upgrade logic if you have other version changes
+      },*/
     );
   }
 
@@ -262,7 +270,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<String?> getGroupID() async {
+  Future<String?> getGroupID1() async {
     final db = await database;
     final List<Map<String, dynamic>> maps =
         await db.query('employees', columns: ['groupID']);

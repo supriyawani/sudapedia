@@ -20,8 +20,8 @@ class PDFSubCategory_repo {
         'POST', Uri.parse(Constant.url + Constant.url_pdf));
 
     var bodyFields = {
-      'apiKey': "8c961641025d48b7b89d475054d656da",
-      'UserToken': userToken,
+      Constant.apiKey: Constant.apiKey_value,
+      Constant.UserToken: userToken,
       'category_id': id,
       'SubCategory_id': subCategoryid,
       'color_id': colorId,

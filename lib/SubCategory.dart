@@ -52,10 +52,18 @@ class _SubCategoryState extends State<SubCategory> {
     print("code:" + code);
   }
 
+  logevent() {
+    Constant.logCategoryItemTap(
+      categoryId: id,
+      categoryName: categoryName.toString(),
+    );
+  }
+
   Future<void> getToken() async {
     userToken = (await DatabaseHelper().getToken1(context))!;
     //userToken = "953Qi5k8I3T0voK";
     getCategoryName();
+
     // loadPosts();
     print("Token:" + userToken!);
   }
@@ -99,6 +107,11 @@ class _SubCategoryState extends State<SubCategory> {
           print("result:" + result.toString());
           categoryName = result.toString();
           print("categoryName:" + categoryName.toString());
+          Constant.logCategoryItemTap(
+            categoryId: id,
+            categoryName: categoryName.toString(),
+          );
+          Constant().initMixpanel(categoryName.toString());
           loadPosts();
         });
       }
@@ -126,47 +139,12 @@ class _SubCategoryState extends State<SubCategory> {
         key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
-            /*  Container(
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  margin: EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/background_image.png"),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),*/
             BackgroundWithLogo(
               code: code.toString(),
             ),
             Container(
               child: Column(
                 children: [
-                  /* Container(
-                        color: Constant.getColor(code.toString()),
-                        width: double.infinity, // Span the full width
-                        child: Image.asset(
-                          'assets/appbar_logo.png',
-                          fit: BoxFit.contain, // Adjust fit as needed
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
-                        color: Constant.getColor(code.toString()),
-                        width: double.infinity,
-                        child: Center(
-                          child: Text(
-                            categoryName.toString(),
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              //fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),*/
                   CustomAppBar(
                       categoryName: categoryName.toString(), code: code),
                   Expanded(
@@ -218,14 +196,6 @@ class _SubCategoryState extends State<SubCategory> {
                                             blurRadius: 6,
                                             spreadRadius: 0,
                                           ),
-                                          /*  BoxShadow(
-                                                color: Color(0xFF18174E)
-                                                    .withOpacity(
-                                                        0.25), // Opacity adjusted based on Figma value
-                                                offset: Offset(0, 3),
-                                                blurRadius: 4,
-                                                spreadRadius: 0,
-                                              ),*/
                                         ],
                                       ),
                                       child: InnerShadow(

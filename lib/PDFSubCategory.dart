@@ -111,7 +111,9 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
   // _CategoryDetailsState(this.id);
 
   loadPosts() async {
-    String? groupId = await DatabaseHelper().getGroupID();
+    //String? groupId = await DatabaseHelper().getGroupID();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? groupId = prefs.getString(Constant.groupID);
     var apiProvider = PDFSubCategory_repo();
     apiProvider
         .getPDFList(userToken.toString(), id.toString(), subcat_id.toString(),
@@ -143,10 +145,13 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
       }
     });*/
     try {
-      String? groupId = await DatabaseHelper().getGroupID();
+      // String? groupId = await DatabaseHelper().getGroupID();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? groupId = prefs.getString(Constant.groupID);
       String? result = await PDFSubCategory_repo().getColorDetailsTitle(
           userToken.toString(),
-          widget.id,
+          // widget.id,
+          id.toString(),
           subcat_id.toString(),
           color_id.toString(),
           color_code_id,
@@ -156,6 +161,11 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
           print("result:" + result.toString());
           categoryName = result.toString();
           print("categoryName:" + categoryName.toString());
+          Constant.logCategoryItemTap(
+            categoryId: widget.id,
+            categoryName: categoryName.toString(),
+          );
+          Constant().initMixpanel("PDF for " + categoryName);
           loadPosts();
         });
       }
@@ -168,57 +178,15 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
 
   @override
   Widget build(BuildContext context) {
-    return /*GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
-        child: WillPopScope(onWillPop: () async {
-          SessionTimeoutManager.resetLogoutTimer(context);
-          return true;
-        }, child: */
-        Sizer(builder: (context, orientation, deviceType) {
+    return Sizer(builder: (context, orientation, deviceType) {
       return Scaffold(
         key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
-            /*   Container(
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  margin: EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/background_image.png"),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),*/
             BackgroundWithLogo(code: code),
             Container(
               child: Column(
                 children: [
-                  /*  Container(
-                        color: Constant.getColor(code.toString()),
-                        width: double.infinity, // Span the full width
-                        child: Image.asset(
-                          'assets/appbar_logo.png',
-                          fit: BoxFit.contain, // Adjust fit as needed
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
-                        color: Constant.getColor(code.toString()),
-                        width: double.infinity,
-                        child: Center(
-                          child: Text(
-                            categoryName.toString(),
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              //fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),*/
                   CustomAppBar(categoryName: categoryName, code: code),
                   Expanded(
                       child: StreamBuilder(
@@ -293,23 +261,6 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
                                                         .black, // Replace with your desired color
                                                   ),
                                                 )),
-                                                /*  Container(
-                                                        child: IconButton(
-                                                      icon: Icon(
-                                                          Icons
-                                                              .download_for_offline_outlined,
-                                                          size: 18.sp,
-                                                          color: Colors.blue),
-                                                      onPressed: () async {
-                                                        pdf_id = dataList[index]
-                                                            .id
-                                                            .toString();
-                                                        await downloadPDF(Constant
-                                                                .url_pdf_path +
-                                                            dataList[index]
-                                                                .pDFPath);
-                                                      },
-                                                    )),*/
                                                 GestureDetector(
                                                   child: Container(
                                                       margin:
@@ -494,52 +445,7 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
     });
   }
 
-  /*Color getColor(String code) {
-    switch (code) {
-      case 'A':
-        return Color(0xFFBABDFF);
-      case 'B':
-        return Color(0xFFFFDFBA);
-      case 'C':
-        return Color(0xFFD6FFF0);
-      case 'D':
-        return Color(0xFFE4FFC1);
-      case 'E':
-        return Color(0xFFBEDCFF);
-      case 'F':
-        return Color(0xFFD9FCFF);
-      case 'G':
-        return Color(0xFFFFCDEB);
-      case 'H':
-        return Color(0xFFE1BAFF);
-      case 'I':
-        return Color(0xFFFFB2B2);
-      case 'J':
-        return Color(0xFFFF9BBF);
-      case 'K':
-        return Color(0xFFFF9BBF);
-
-      default:
-        return Color(0xFFFFDFBA); // fallback image
-    }
-  }*/
-
-  /* void launchPDF(String pdfUrl) async {
-    if (await canLaunch(pdfUrl)) {
-      await launch(pdfUrl);
-    } else {
-      throw 'Could not launch $pdfUrl';
-    }
-  }
-
-  void openPdfFromUrl(String url) {
-    debugPrint('opening PDF url = $url');
-    var googleDocsUrl =
-        'https://docs.google.com/gview?embedded=true&url=${Uri.encodeQueryComponent(url)}';
-    debugPrint('opening Google docs with PDF url = $googleDocsUrl');
-    final Uri uri = Uri.parse(googleDocsUrl);
-    launchUrl(uri);
-  }*/
+  String? FileName;
 
   Future<void> downloadPDF(String url) async {
     try {
@@ -552,6 +458,7 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
       print(fullPath.toString());
       setState(() {
         downloadedPDFs[pdf_id] = fullPath;
+        FileName = fileName;
       });
 
       final dbHelper = DatabaseHelper();
@@ -570,55 +477,15 @@ class _PDFSubCategoryState extends State<PDFSubCategory> {
             )));
   }
 
-/*  Future<void> downloadPDF(String url) async {
-    try {
-      var time = DateTime.now().microsecondsSinceEpoch;
-      String fileName = url.split('/').last;
-      var path = "/storage/emulated/0/Download";
-      var file = File(path);
-
-      String fullPath = '$path/$fileName';
-      Dio dio = Dio();
-      // Download the file
-      await dio.download(url, fullPath);
-      print('fileName PDF downloaded to: $fullPath');
-      Fluttertoast.showToast(
-        msg: "$fileName is downloaded",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      isDownloaded = true;
-      final dbHelper = DatabaseHelper();
-      final employeeID = await dbHelper.getEmployeeID();
-      print("Retrieved employeeID: $employeeID");
-
-      // Insert a user token
-      print("Retrieved userToken: $userToken");
-      Stats_repo()
-          .fetchCategoryData(userToken.toString(), id, pdf_id, employeeID!);
-
-      // Save the downloaded PDF info in SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(pdf_id, fullPath);
-
-      // Update the local map and state
-      setState(() {
-        downloadedPDFs[pdf_id] = fullPath;
-      });
-    } catch (e) {
-      print('Error downloading PDF: $e');
-    }
-  }*/
-
   void shareFile(String filePath) {
     // Share.shareFiles([filePath], text: 'Check out this PDF!');
     if (filePath != null) {
       print(filePath.toString());
       Share.shareFiles([filePath], text: 'Check out this PDF!');
+      Constant.logpdf(
+        pdfname: "Shared " + FileName.toString(),
+      );
+      Constant().initMixpanel("" + FileName.toString() + " " + "Shared");
     } else {
       print("File path is null. Cannot share the file.");
       ScaffoldMessenger.of(context).showSnackBar(

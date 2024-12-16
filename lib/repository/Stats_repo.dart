@@ -1,5 +1,7 @@
 import 'package:http/http.dart' as http;
 
+import '../Common/Constant.dart';
+
 class Stats_repo {
   final String apiUrl =
       'https://sudapedia.sudarshan.com/Admin/web-api/stats.php';
@@ -8,8 +10,8 @@ class Stats_repo {
       String userToken, String id, String pdf_id, String employeeId) async {
     var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
     var body = {
-      'apiKey': '8c961641025d48b7b89d475054d656da',
-      'UserToken': userToken,
+      Constant.apiKey: Constant.apiKey_value,
+      Constant.UserToken: userToken,
       'employee_id': employeeId,
       'pdf_id': pdf_id,
       //'category_id': '12',

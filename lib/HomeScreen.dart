@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     print("Token:" + userToken!);
     // _categoriesStream = categoryRepo.getCategoryStream(userToken.toString());
     setState(() async {
-      String group_id = (await DatabaseHelper().getGroupID().toString());
+      String group_id = (await DatabaseHelper().getGroupID1().toString());
       _categoriesStream =
           categoryRepo.getCategoryStream(userToken.toString(), group_id);
     });

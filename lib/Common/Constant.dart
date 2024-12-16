@@ -1,16 +1,20 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:sudapedia/SendOTP.dart';
 
+import '../Database/DatabaseHelper.dart';
+
 class Constant {
-  //static String url = "https://sudapedia.sudarshan.com/Admin/web-api/";
-  static String url = "https://beta-sudapedia.sudarshan.com/Admin/web-api/";
+  static String url = "https://sudapedia.sudarshan.com/Admin/web-api/";
+  //static String url = "https://beta-sudapedia.sudarshan.com/Admin/web-api/";
   static String url_pdf_path = "https://sudapedia.sudarshan.com/Admin/";
   static String url_login = "Login.php";
   static String url_logout = "logout.php";
   static String url_otp = "Otp.php";
   static String url_categories = "Categories.php";
-  static String api_key = "8c961641025d48b7b89d475054d656da";
+  //static String api_key = "8c961641025d48b7b89d475054d656da";
   static String url_categorydetails = "CategoriesDetails.php";
   static String url_pdf = "PDFs.php";
   static String url_subcategoryButtons = "SubCategoryButtons.php";
@@ -20,7 +24,65 @@ class Constant {
   static String url_notification = "notification.php";
 
   static String groupID = "group_id";
-  static String apiKey = "8c961641025d48b7b89d475054d656da";
+  static String apiKey_value = "8c961641025d48b7b89d475054d656da";
+  static String apiKey = "apiKey";
+  static String UserToken = "UserToken";
+
+  static final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  static Future<void> logCategoryItemTap({
+    required String categoryId,
+    required String categoryName,
+  }) async {
+    String? emplyeeid = (await DatabaseHelper().getEmployeeID());
+    try {
+      await _analytics.logEvent(
+        name: 'category',
+        parameters: {
+          'employee_id': emplyeeid,
+          'category_id': categoryId,
+          'category_name': categoryName,
+        },
+      );
+      print('Event logged: category_item_tap');
+    } catch (e) {
+      print('Error logging event: $e');
+    }
+  }
+
+  static Future<void> logpdf({
+    required String pdfname,
+  }) async {
+    String? emplyeeid = (await DatabaseHelper().getEmployeeID());
+    try {
+      await _analytics.logEvent(
+        name: 'category',
+        parameters: {
+          'employee_id': emplyeeid,
+          'pdf_name': pdfname,
+        },
+      );
+      print('Event logged: category_item_tap');
+    } catch (e) {
+      print('Error logging event: $e');
+    }
+  }
+
+  late final Mixpanel mixpanel;
+  Future<void> initMixpanel(String screenName) async {
+    /* mixpanel.track("Screen Viewed", properties: {
+      "Screen Name": screenName,
+    }); */
+    //mixpanel = await Mixpanel.init("62ddf5b857e7c7599006c1200e6d2680");
+    mixpanel = await Mixpanel.init("74e0d8e0c7c5a746e5fbca830902f411");
+    //mixpanel = await Mixpanel.init("ce929324ba3b21726809dc3bb81bde27");
+    final dbHelper = DatabaseHelper();
+    final employeeID = await dbHelper.getEmployeeID();
+    print("employeeId:" + employeeID.toString());
+    print(screenName);
+    mixpanel.identify(employeeID.toString());
+    mixpanel.track(screenName);
+    //mixpanel.track(screenName);
+  }
 
   static Color getColor(String code) {
     switch (code) {

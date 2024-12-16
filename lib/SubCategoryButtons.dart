@@ -34,7 +34,7 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
   String id = "", code = "", subcat_id = "", categoryName = "";
   String? subcategoryName = "";
   Stream<List<ColorCode_arr>> _categoriesStream = Stream.value([]);
-
+  String? Category;
   _SubCategoryButtonsState(
       String id, String code, String subcat_id, String categoryName) {
     this.id = id;
@@ -61,6 +61,7 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
     print("code:" + code);
     print("subcat_id:" + subcat_id);
     print("categoryName:" + categoryName);
+    Category = categoryName;
   }
 
   Future<void> getToken() async {
@@ -79,7 +80,10 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
 
   loadPosts() async {
     var apiProvider = SubCategoryButton_repo();
-    String? groupId = await DatabaseHelper().getGroupID();
+    // String? groupId = await DatabaseHelper().getGroupID();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? groupId = prefs.getString(Constant.groupID);
+    print("groupID:" + groupId.toString());
     apiProvider
         .getSubcategorybuttonList(
             userToken.toString(), id.toString(), subcat_id, groupId.toString())
@@ -90,27 +94,10 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
   }
 
   void getCategoryName() async {
-    /*SubCategoryButton_repo()
-        .getsubCategoryName(
-            userToken.toString(), id.toString(), subcat_id.toString())
-        .then((result) {
-      if (result != null) {
-        setState(() {
-          print("result:" + result.toString());
-          subcategoryName = result.toString();
-          print("categoryName:" + subcategoryName.toString());
-          loadPosts();
-        });
-
-        // saveData(result);
-      } else {
-        setState(() {
-          // Constant.displayToast("please enter valid credentials!");
-        });
-      }
-    });*/
     try {
-      String? groupId = await DatabaseHelper().getGroupID();
+      //String? groupId = await DatabaseHelper().getGroupID();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? groupId = prefs.getString(Constant.groupID);
       String? result = await SubCategoryButton_repo().getsubCategoryName(
           userToken.toString(),
           widget.id,
@@ -121,6 +108,12 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
           print("result:" + result.toString());
           categoryName = result.toString();
           print("categoryName:" + categoryName.toString());
+          Constant.logCategoryItemTap(
+            categoryId: widget.id,
+            categoryName: categoryName.toString(),
+          );
+          //   Constant().initMixpanel(Category.toString() + " " + categoryName.toString());
+          Constant().initMixpanel(categoryName.toString());
           loadPosts();
         });
       }
@@ -133,57 +126,15 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
   final String bgcolor = "R254/G204/B0";
   @override
   Widget build(BuildContext context) {
-    return /*GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
-        child: WillPopScope(onWillPop: () async {
-          SessionTimeoutManager.resetLogoutTimer(context);
-          return true;
-        }, child:*/
-        Sizer(builder: (context, orientation, deviceType) {
+    return Sizer(builder: (context, orientation, deviceType) {
       return Scaffold(
         key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
-            /* Container(
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  margin: EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/background_image.png"),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),*/
             BackgroundWithLogo(code: code),
             Container(
               child: Column(
                 children: [
-                  /*   Container(
-                        color: Constant.getColor(code.toString()),
-                        width: double.infinity, // Span the full width
-                        child: Image.asset(
-                          'assets/appbar_logo.png',
-                          fit: BoxFit.contain, // Adjust fit as needed
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
-                        color: Constant.getColor(code.toString()),
-                        width: double.infinity,
-                        child: Center(
-                          child: Text(
-                            subcategoryName.toString(),
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),*/
                   CustomAppBar(categoryName: categoryName, code: code),
                   Expanded(
                       child: StreamBuilder(
@@ -244,21 +195,12 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                                     ),
                                   ],
                                 ),
-                                /* child: InnerShadow(
-                                        shadows: [
-                                          Shadow(
-                                            color: Color(0xFF18174E)
-                                                .withOpacity(
-                                                    0.25), // Inner shadow
-                                            offset: Offset(0,
-                                                -2), // Adjust offset as needed
-                                            blurRadius: 4,
-                                          ),
-                                        ],*/
+
                                 child: Center(
                                     child:
                                         Text(dataList[index].title ?? 'No Name',
                                             maxLines: 2,
+                                            textAlign: TextAlign.center,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontSize: 13.sp,
@@ -266,8 +208,6 @@ class _SubCategoryButtonsState extends State<SubCategoryButtons> {
                                               color: txtcolor(dataList[index]
                                                   .textcolor
                                                   .toString()),
-                                              /*dataList[index].textcolor.toString()*/
-                                              // Replace with your desired color
                                             ))),
                               )),
                               onTap: () {

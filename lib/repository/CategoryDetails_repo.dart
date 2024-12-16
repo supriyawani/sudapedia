@@ -14,8 +14,8 @@ class CategoryDetails_repo {
         'POST', Uri.parse(Constant.url + Constant.url_categorydetails));
 
     request.bodyFields = {
-      'apiKey': "8c961641025d48b7b89d475054d656da",
-      'UserToken': userToken,
+      Constant.apiKey: Constant.apiKey_value,
+      Constant.UserToken: userToken,
       'category_id': id,
     };
     request.headers.addAll(headers);
@@ -78,8 +78,8 @@ class CategoryDetails_repo {
     var request = http.MultipartRequest(
         'POST', Uri.parse(Constant.url + Constant.url_categorydetails));
     var bodyfields = {
-      'apiKey': "8c961641025d48b7b89d475054d656da",
-      'UserToken': userToken,
+      Constant.apiKey: Constant.apiKey_value,
+      Constant.UserToken: userToken,
       'category_id': id,
     };
     // print("bodyfields" + bodyfields.toString());
@@ -112,8 +112,8 @@ class CategoryDetails_repo {
     var request = http.MultipartRequest(
         'POST', Uri.parse(Constant.url + Constant.url_categorydetails));
     var bodyfields = {
-      'apiKey': "8c961641025d48b7b89d475054d656da",
-      'UserToken': userToken,
+      Constant.apiKey: Constant.apiKey_value,
+      Constant.UserToken: userToken,
       'category_id': id,
     };
     // print("bodyfields" + bodyfields.toString());

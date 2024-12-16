@@ -1,22 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
-import 'package:sudapedia/CategoryComparison.dart';
-import 'package:sudapedia/CategoryDetails.dart';
 import 'package:sudapedia/Common/Constant.dart';
 import 'package:sudapedia/Database/DatabaseHelper.dart';
 import 'package:sudapedia/Model/CategoriesResponse.dart';
 import 'package:sudapedia/Model/NotificationResponse.dart';
-import 'package:sudapedia/SubCategory.dart';
-import 'package:sudapedia/SubCategoryButtons.dart';
 import 'package:sudapedia/repository/Category_repo.dart';
 
+import 'CategoryComparison.dart';
+import 'CategoryDetails.dart';
 import 'Notifications.dart';
+import 'SubCategory.dart';
+import 'SubCategoryButtons.dart';
 
 class NewHomeScreen extends StatefulWidget {
   const NewHomeScreen({Key? key}) : super(key: key);
@@ -27,7 +28,8 @@ class NewHomeScreen extends StatefulWidget {
 
 class _NewHomeScreenState extends State<NewHomeScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  late final List<CategoriesResponse> categories;
+  // late final List<CategoriesResponse> categories;
+  late List<CategoriesResponse> categories;
   final categoryRepo = Category_repo();
   Stream<List<CategoriesResponse>> _categoriesStream = Stream.value([]);
   String? userToken, employeeId;
@@ -37,17 +39,35 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
   //late Future<void> _initTokenFuture;
   Timer? _logoutTimer;
   int count = 0;
+  String? groupID;
+
+  List<NotificationArr> notifications = [];
+  String? errorMessage;
+  String? errorMessageForNotifications;
+  String? errorMessageForCategories;
+  late Stream<List<CategoriesResponse>> categoriesStream;
+
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   @override
   void initState() {
     super.initState();
 
     // WidgetsBinding.instance.addObserver(this);
     // notificationCountforBadge();
+    /* logEvent('HomeScreen', {
+      'employee_id': '888999',
+    });*/
+    logUserId();
     getToken();
     fetchnotifiication();
+    Constant().initMixpanel("HomeScreen");
+
+    //fetchnotifiication1();
+    //categoriesStream = getCategoryStream();
   }
 
-  /*Future<void> notificationCountforBadge() async {
+  Future<void> notificationCountforBadge() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // notificationCount = prefs.getString('notificationcount');
     // notificationCount = "3";
@@ -59,7 +79,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
       //notificationCount = prefs.getString('notificationcount');
       // notificationCount = prefs.getString('notificationcount') ?? "";
     });
-  }*/
+  }
 
   Future<void> fetchnotifiication() async {
     String? UserToken = await DatabaseHelper().getToken1(context);
@@ -106,6 +126,77 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     }
   }
 
+  Future<void> fetchnotifiication1() async {
+    try {
+      String? userToken = await DatabaseHelper().getToken1(context);
+      //  String userToken = 'userToken123'; // Replace with actual token fetching
+
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(Constant.url + Constant.url_notification),
+      );
+
+      request.fields.addAll({
+        Constant.apiKey: Constant.apiKey_value,
+        Constant.UserToken: userToken.toString(),
+      });
+
+      http.StreamedResponse response = await request.send();
+      var res = await response.stream.bytesToString();
+      var jsonData = json.decode(res);
+
+      if (jsonData != null && jsonData['msg'] == "Inavlid User Token Key") {
+        setState(() {
+          errorMessageForNotifications = 'Invalid User Token Key';
+        });
+      } else if (jsonData != null && jsonData['notifications_arr'] != null) {
+        final List<dynamic> categoriesList = jsonData['notifications_arr'];
+        setState(() {
+          notifications = categoriesList
+              .map((item) => NotificationArr.fromJson(item))
+              .toList();
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessageForNotifications = e.toString();
+      });
+    }
+  }
+
+  Stream<List<CategoriesResponse>> getCategoryStream1() async* {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(Constant.url + Constant.url_categories),
+    );
+    String? userToken = await DatabaseHelper().getToken1(context);
+    //String? groupid = await DatabaseHelper().getGroupID();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? groupid = prefs.getString(Constant.groupID);
+    request.fields.addAll({
+      'apiKey': '8c961641025d48b7b89d475054d656da',
+      'UserToken': userToken.toString(),
+      Constant.groupID: groupid.toString(),
+    });
+
+    http.StreamedResponse response = await request.send();
+    var res = await response.stream.bytesToString();
+    var jsonData = json.decode(res);
+
+    if (jsonData != null && jsonData['msg'] == "Inavlid User Token Key") {
+      setState(() {
+        errorMessageForCategories = 'Invalid User Token Key';
+      });
+    } else if (jsonData != null && jsonData['categories_arr'] != null) {
+      final List<dynamic> categoriesList = jsonData['categories_arr'];
+      yield categoriesList
+          .map((item) => CategoriesResponse.fromJson(item))
+          .toList();
+    } else {
+      yield [];
+    }
+  }
+
   @override
   void dispose() {
     //_logoutTimer?.cancel();
@@ -114,19 +205,18 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
   }
 
   Future<void> getToken() async {
-    // userToken = await DatabaseHelper().getToken();
-
     userToken = await DatabaseHelper().getToken1(context);
 
-    // userToken = "953Qi5k8I3T0voK";
     print("Token:" + userToken!);
-    // _categoriesStream = categoryRepo.getCategoryStream(userToken.toString());
-    //String group_id = await DatabaseHelper().getGroupID().toString();
-    String? groupId = await DatabaseHelper().getGroupID();
-    print("groupID:" + groupId.toString());
+
+    /* String? groupId = await DatabaseHelper().getGroupID();
+    print("groupID:" + groupId.toString());*/
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    groupID = prefs.getString(Constant.groupID);
+
     setState(() async {
       _categoriesStream = categoryRepo.getCategoryStream(
-          userToken.toString(), groupId.toString());
+          userToken.toString(), groupID.toString());
     });
   }
 
@@ -151,14 +241,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
 
     count = notificationCount ?? 0;
     print("count:" + count.toString());
-    return /*GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => SessionTimeoutManager.resetLogoutTimer(context),
-        child: WillPopScope(onWillPop: () async {
-          SessionTimeoutManager.resetLogoutTimer(context);
-          return true;
-        }, child:*/
-        Sizer(builder: (context, orientation, deviceType) {
+    return Sizer(builder: (context, orientation, deviceType) {
       return Scaffold(
           key: _scaffoldKey,
           body: Stack(children: <Widget>[
@@ -200,26 +283,6 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                         Navigator.of(context).pop();
                       },
                     ))),
-            /* BackgroundWithLogo(),*/
-            /* Positioned(
-                top: 0, // Adjust top padding as needed
-                left: 0,
-                right: 0,
-                child: Container(
-                    margin: EdgeInsets.only(top: 38.sp, right: 10.sp),
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: Icon(Icons.notifications,
-                          size: 30.sp, color: Colors.orange),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Notifications(),
-                          ),
-                        );
-                      },
-                    ))),*/
             Positioned(
                 top: 0, // Adjust top padding as needed
                 left: 0,
@@ -283,85 +346,16 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                     );
                   },
                 )),
-            /*Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Consumer<NotificationProvider>(
-                builder: (context, provider, child) {
-                  return Container(
-                    margin: EdgeInsets.only(top: 30.sp, right: 10.sp),
-                    alignment: Alignment.topRight,
-                    child: Stack(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.notifications,
-                              size: 35.sp, color: Colors.orange),
-                          onPressed: () async {
-                            resetNotificationCount(provider);
-                            setState(() {
-                              showBadge = false;
-                            });
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Notifications(),
-                              ),
-                            );
-                          },
-                        ),
-                        if (provider.notificationCount > 0 && showBadge)
-                          Positioned(
-                            right: 0,
-                            child: GestureDetector(
-                              child: Container(
-                                margin: EdgeInsets.only(right: 2.sp),
-                                padding: EdgeInsets.all(5.sp),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  '${provider.notificationCount}',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                resetNotificationCount(provider);
-                                setState(() {
-                                  showBadge = false;
-                                });
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Notifications(),
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),*/
             StreamBuilder<List<CategoriesResponse>>(
               stream: _categoriesStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
-                }
-                /*else if (snapshot.hasError) {
+                } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No categories available'));
-                } */
-                else if (snapshot.hasError) {
+                } else if (snapshot.hasError) {
                   Utils.handleInvalidToken(context, snapshot.error);
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
@@ -385,35 +379,6 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                               category: categories[index],
                             ),
                             onTap: () async {
-                              /*  DateTime now = DateTime.now();
-
-                              // Format the date and time using intl package
-                              String formattedDate =
-                                  DateFormat('yyyy-MM-dd – kk:mm').format(now);
-                              print(
-                                  "formattedDate:" + formattedDate.toString());
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setString(
-                                  'currentDateTime', formattedDate);
-
-                              // Retrieve the stored date and time
-                              String storedDateTime =
-                                  prefs.getString('currentDateTime') ??
-                                      'No data';
-
-                              DateTime futureDateTime =
-                                  now.add(Duration(hours: 24));
-                              String formattedFutureDateTime =
-                                  DateFormat('yyyy-MM-dd – kk:mm')
-                                      .format(futureDateTime);
-
-                              // Store the future date and time in SharedPreferences
-                              await prefs.setString(
-                                  'futureDateTime', formattedFutureDateTime);
-                              print("formattedFutureDateTime:" +
-                                  formattedFutureDateTime);*/
-
                               if (categories[index].flag.toString() == "0") {
                                 Navigator.push(
                                     context,
@@ -475,7 +440,19 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             ),
           ]));
     });
-    //));
+  }
+
+  Future<void> logEvent(String name, Map<String, dynamic> parameters) async {
+    await analytics.logEvent(
+      name: name,
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logUserId() async {
+    employeeId = (await DatabaseHelper().getEmployeeID());
+    print("employeeId:" + employeeId.toString());
+    await analytics.setUserId(id: employeeId);
   }
 }
 
